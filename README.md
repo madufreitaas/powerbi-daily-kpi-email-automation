@@ -14,7 +14,9 @@ Todo dia, às 8h da manhã:
 4. Envia via Microsoft Graph (`sendMail`) para uma lista de destinatários
 5. Roda sozinho, via Agendador de Tarefas do Windows (ou qualquer scheduler equivalente)
 
-Veja [`sample-email-preview.html`](./sample-email-preview.html) para o resultado visual (dados fictícios).
+![Exemplo do e-mail gerado](./preview.png)
+
+Veja o resultado completo, interativo, em [**sample-email-preview.html**](./sample-email-preview.html) (dados fictícios) — ou abra a versão publicada: **[link do GitHub Pages a definir]**.
 
 ## Por que isso não foi trivial
 
