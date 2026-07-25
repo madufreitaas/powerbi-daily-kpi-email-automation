@@ -14,13 +14,11 @@ Todo dia, às 8h da manhã:
 4. Envia via Microsoft Graph (`sendMail`) para uma lista de destinatários
 5. Roda sozinho, via Agendador de Tarefas do Windows (ou qualquer scheduler equivalente)
 
-![Exemplo do e-mail gerado](./preview.png)
+O e-mail em si é deliberadamente simples: HTML baseado em tabelas, compatível com Outlook Desktop, sem depender de CSS que o motor de renderização do Outlook não suporta.
 
-Veja o modelo do e-mail em [sample-email-preview.html](./sample-email-preview.html) (dados fictícios).
+## Resultado: painel web
 
-### Painel web complementar
-
-O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). O resultado completo do projeto é o painel web complementar, publicado em **[madufreitaas.github.io/powerbi-daily-kpi-email-automation](https://madufreitaas.github.io/powerbi-daily-kpi-email-automation/)** ([index.html](./index.html) neste repositório) — uma versão web dos mesmos dados, com foco em arquitetura da informação e acessibilidade.
+O resultado completo do projeto é publicado em **[madufreitaas.github.io/powerbi-daily-kpi-email-automation](https://madufreitaas.github.io/powerbi-daily-kpi-email-automation/)** ([index.html](./index.html) neste repositório) — uma versão web dos mesmos dados do e-mail, com foco em arquitetura da informação e acessibilidade.
 
 ![Painel web complementar](./dashboard-preview.png)
 
