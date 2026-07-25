@@ -16,11 +16,11 @@ Todo dia, às 8h da manhã:
 
 ![Exemplo do e-mail gerado](./preview.png)
 
-Veja o resultado completo, interativo, em [sample-email-preview.html](./sample-email-preview.html) (dados fictícios), ou abra a versão publicada: [link do GitHub Pages a definir].
+Veja o modelo do e-mail em [sample-email-preview.html](./sample-email-preview.html) (dados fictícios).
 
 ### Painel web complementar
 
-O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). Para quem quer explorar mais, [dashboard-preview.html](./dashboard-preview.html) é uma versão web complementar dos mesmos dados, com foco em arquitetura da informação e acessibilidade.
+O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). O resultado completo do projeto é o painel web complementar, publicado em **[madufreitaas.github.io/powerbi-daily-kpi-email-automation](https://madufreitaas.github.io/powerbi-daily-kpi-email-automation/)** ([index.html](./index.html) neste repositório) — uma versão web dos mesmos dados, com foco em arquitetura da informação e acessibilidade.
 
 ![Painel web complementar](./dashboard-preview.png)
 
