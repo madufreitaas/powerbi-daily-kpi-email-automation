@@ -24,13 +24,14 @@ O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível co
 
 ![Painel web complementar](./dashboard-preview.png)
 
-Hierarquia de leitura, do geral ao específico:
+Ordem de leitura, do geral ao específico:
 
-1. Um bloco de insight que resume em uma frase o que mudou e por quê, seguido de chips com os quatro pontos que merecem atenção
-2. Um número protagonista (receita bruta acumulada, em 50px) com três indicadores de apoio ao lado, em vez de cinco cartões de peso visual igual
-3. Um gráfico de linha da receita mensal contra a meta, com Janeiro a Junho fechados e Julho como projeção tracejada, já que o mês ainda está em curso
-4. Um medidor de projeção que mostra numa única barra o que já foi realizado, o que a projeção acrescenta e o quanto falta para a meta
-5. A tabela financeira completa e o detalhamento por dimensão
+1. Um bloco de insight que resume em uma frase o que mudou e por quê, seguido de chips com os pontos que merecem atenção
+2. Os indicadores em cartões de peso visual igual, separados em dois grupos: resultado do mês e meta do mês
+3. A tabela comparativa completa, com todas as linhas do DRE e a variação de cada uma
+4. Um gráfico de linha da receita mensal contra a meta, com Janeiro a Junho fechados e Julho como projeção tracejada, já que o mês ainda está em curso
+5. Um medidor que mostra numa única barra o que já foi realizado, o que a projeção acrescenta e o quanto falta para a meta
+6. O detalhamento por dimensão, em tabelas ordenáveis
 
 Decisões de acessibilidade e de visualização:
 

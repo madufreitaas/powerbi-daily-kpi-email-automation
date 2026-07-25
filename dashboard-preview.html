@@ -165,27 +165,18 @@
   }
   .card h3 { font-size: 15px; font-weight: 700; margin: 0 0 3px; }
 
-  /* hero + tiles */
-  .hero-row { display: grid; grid-template-columns: 1.15fr 2fr; gap: 14px; align-items: stretch; }
-  .hero {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--r-lg); padding: 20px;
-    display: flex; flex-direction: column; justify-content: center;
-  }
-  .hero .lbl { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
-  .hero .fig { font-size: 50px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; margin-bottom: 12px; }
-  .hero .fig span { font-size: 21px; font-weight: 400; color: var(--ink-2); }
-  .hero .ctx { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; line-height: 1.5; }
-
-  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  /* cartoes de indicador: todos com o mesmo peso visual */
+  .tiles { display: grid; gap: 14px; align-items: stretch; }
+  .tiles.t3 { grid-template-columns: repeat(3, 1fr); }
   .tile {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--r-md); padding: 16px;
-    display: flex; flex-direction: column; gap: 9px;
+    border-radius: var(--r-md); padding: 18px;
+    display: flex; flex-direction: column; gap: 10px;
   }
   .tile .lbl { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
-  .tile .val { font-size: 26px; font-weight: 700; line-height: 1; }
-  .tile .val span { font-size: 13px; font-weight: 400; color: var(--ink-2); }
+  .tile .val { font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+  .tile .val span { font-size: 14px; font-weight: 400; color: var(--ink-2); }
+  .tile .chip { align-self: flex-start; margin-top: auto; }
 
   /* gráfico */
   .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
@@ -291,10 +282,8 @@
   footer { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-muted); line-height: 1.6; }
 
   @media (max-width: 760px) {
-    .hero-row { grid-template-columns: 1fr; }
-    .tiles { grid-template-columns: 1fr; }
+    .tiles.t3 { grid-template-columns: 1fr; }
     .bd-grid { grid-template-columns: 1fr; }
-    .hero .fig { font-size: 42px; }
   }
 </style>
 
@@ -308,10 +297,11 @@
       <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true"><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="20" y="10" width="8" height="8"/><rect x="10" y="20" width="8" height="8"/></svg>
       <b>Acme</b>
     </span>
-    <a href="#destaque">Destaque</a>
+    <a href="#destaque">Resumo</a>
+    <a href="#indicadores">Indicadores</a>
+    <a href="#comparativo">Comparativo</a>
     <a href="#evolucao">Evolução</a>
     <a href="#projecao">Projeção</a>
-    <a href="#indicadores">Indicadores</a>
     <a href="#detalhamento">Detalhamento</a>
   </nav>
 </div>
@@ -337,33 +327,66 @@
     </div>
   </header>
 
-  <section aria-labelledby="h-num">
-    <p class="eyebrow">O número do dia</p>
-    <h2 id="h-num" class="sr-only">Receita bruta do mês</h2>
-    <div class="hero-row">
-      <div class="hero">
-        <div class="lbl">Receita bruta acumulada</div>
-        <div class="fig">R$ 18,44<span> mi</span></div>
-        <span class="chip good" style="align-self:flex-start;"><span class="ico" aria-hidden="true">▲</span>8,7% vs mesmo período de Junho</span>
-        <p class="ctx">75,3% da meta de R$ 24,50 mi cumpridos com 23 de 31 dias corridos.</p>
+  <section id="indicadores">
+    <p class="eyebrow">Resultado do mês</p>
+    <h2>Indicadores principais</h2>
+    <p class="sub">Acumulado até 23/07 contra o mesmo período de Junho.</p>
+
+    <div class="tiles t3">
+      <div class="tile">
+        <div class="lbl">Receita bruta</div>
+        <div class="val">R$ 18,44<span> mi</span></div>
+        <span class="chip good"><span class="ico" aria-hidden="true">▲</span>8,7%</span>
       </div>
-      <div class="tiles">
-        <div class="tile">
-          <div class="lbl">Lucro bruto</div>
-          <div class="val">R$ 5,24<span> mi</span></div>
-          <span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span>
-        </div>
-        <div class="tile">
-          <div class="lbl">Margem bruta</div>
-          <div class="val">33,2<span>%</span></div>
-          <span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span>
-        </div>
-        <div class="tile">
-          <div class="lbl">Atingimento de meta</div>
-          <div class="val">75,3<span>%</span></div>
-          <span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span>
-        </div>
+      <div class="tile">
+        <div class="lbl">Lucro bruto</div>
+        <div class="val">R$ 5,24<span> mi</span></div>
+        <span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span>
       </div>
+      <div class="tile">
+        <div class="lbl">Margem bruta</div>
+        <div class="val">33,2<span>%</span></div>
+        <span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span>
+      </div>
+    </div>
+
+    <p class="eyebrow" style="margin-top:24px;">Meta do mês</p>
+    <div class="tiles t3">
+      <div class="tile">
+        <div class="lbl">Atingimento de meta</div>
+        <div class="val">75,3<span>%</span></div>
+        <span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span>
+      </div>
+      <div class="tile">
+        <div class="lbl">Projeção de fechamento</div>
+        <div class="val">R$ 23,98<span> mi</span></div>
+        <span class="chip warn"><span class="ico" aria-hidden="true">⚠</span>2,1% abaixo da meta</span>
+      </div>
+      <div class="tile">
+        <div class="lbl">Meta do mês</div>
+        <div class="val">R$ 24,50<span> mi</span></div>
+        <span class="chip"><span class="ico" aria-hidden="true">◆</span>Faltam R$ 0,52 mi</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparativo">
+    <p class="eyebrow">Detalhe financeiro</p>
+    <h2>Comparativo completo</h2>
+    <p class="sub">Acumulado no mês contra o mesmo período do mês anterior. Base: Realizado.</p>
+    <div class="card tbl-wrap">
+      <table>
+        <thead><tr><th scope="col">Indicador</th><th scope="col">Jul/2026 (até 23)</th><th scope="col">Jun/2026 (até 23)</th><th scope="col">Variação</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Receita bruta</td><td>R$ 18.436.200</td><td class="dim">R$ 16.958.400</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>8,7%</span></td></tr>
+          <tr class="alert"><td class="nm">Impostos (% da receita)</td><td>14,2%</td><td class="dim">13,3%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>0,9 p.p.</span></td></tr>
+          <tr><td class="nm">Receita líquida</td><td>R$ 15.812.900</td><td class="dim">R$ 14.703.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>7,5%</span></td></tr>
+          <tr class="alert"><td class="nm">CMV</td><td>R$ 10.568.800</td><td class="dim">R$ 9.557.000</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>10,6%</span></td></tr>
+          <tr><td class="nm">Lucro bruto</td><td>R$ 5.244.100</td><td class="dim">R$ 5.146.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span></td></tr>
+          <tr class="alert"><td class="nm">Margem bruta</td><td>33,2%</td><td class="dim">35,0%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span></td></tr>
+          <tr><td class="nm">Atingimento de meta</td><td>75,3%</td><td class="dim">61,7%</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -461,26 +484,6 @@
           <span><i class="sw c" aria-hidden="true"></i>Falta para a meta: R$ 0,52 mi</span>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="indicadores">
-    <p class="eyebrow">Detalhe financeiro</p>
-    <h2>Comparativo completo</h2>
-    <p class="sub">Acumulado no mês contra o mesmo período do mês anterior. Base: Realizado.</p>
-    <div class="card tbl-wrap">
-      <table>
-        <thead><tr><th scope="col">Indicador</th><th scope="col">Jul/2026 (até 23)</th><th scope="col">Jun/2026 (até 23)</th><th scope="col">Variação</th></tr></thead>
-        <tbody>
-          <tr><td class="nm">Receita bruta</td><td>R$ 18.436.200</td><td class="dim">R$ 16.958.400</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>8,7%</span></td></tr>
-          <tr class="alert"><td class="nm">Impostos (% da receita)</td><td>14,2%</td><td class="dim">13,3%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>0,9 p.p.</span></td></tr>
-          <tr><td class="nm">Receita líquida</td><td>R$ 15.812.900</td><td class="dim">R$ 14.703.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>7,5%</span></td></tr>
-          <tr class="alert"><td class="nm">CMV</td><td>R$ 10.568.800</td><td class="dim">R$ 9.557.000</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>10,6%</span></td></tr>
-          <tr><td class="nm">Lucro bruto</td><td>R$ 5.244.100</td><td class="dim">R$ 5.146.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span></td></tr>
-          <tr class="alert"><td class="nm">Margem bruta</td><td>33,2%</td><td class="dim">35,0%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span></td></tr>
-          <tr><td class="nm">Atingimento de meta</td><td>75,3%</td><td class="dim">61,7%</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span></td></tr>
-        </tbody>
-      </table>
     </div>
   </section>
 
