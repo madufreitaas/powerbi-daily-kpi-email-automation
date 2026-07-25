@@ -1,0 +1,4 @@
+# Segredos e tokens nunca devem ser versionados
+.secrets/
+*.env
+*-preview-real.html

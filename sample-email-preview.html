@@ -1,0 +1,330 @@
+<title>Exemplo — Resumo Gerencial Diário</title>
+<style>
+  :root {
+    --color-bg: #eef2f7;
+    --color-surface: #ffffff;
+    --color-text: #1c2b45;
+    --color-divider: #d3dae5;
+    --color-accent: #0b4f8a;
+    --color-accent-500: #1c6fc9;
+    --color-accent-700: #0b4f8a;
+    --color-good-100: #e6f4ea;
+    --color-good-800: #1f6b3a;
+    --color-bad: #af2a34;
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+  }
+  :root[data-theme="dark"] {
+    --color-bg: #0c1420;
+    --color-surface: #142132;
+    --color-text: #e7edf6;
+    --color-divider: #2a3a52;
+    --color-accent: #5fa8ea;
+    --color-accent-500: #5fa8ea;
+    --color-accent-700: #16324f;
+    --color-good-100: #17301f;
+    --color-good-800: #6bd48c;
+    --color-bad: #e2727a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-bg: #0c1420;
+      --color-surface: #142132;
+      --color-text: #e7edf6;
+      --color-divider: #2a3a52;
+      --color-accent: #5fa8ea;
+      --color-accent-500: #5fa8ea;
+      --color-accent-700: #16324f;
+      --color-good-100: #17301f;
+      --color-good-800: #6bd48c;
+      --color-bad: #e2727a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: "Segoe UI", "Segoe UI Variable", Calibri, Roboto, Helvetica, Arial, sans-serif;
+    padding: 40px 16px 64px;
+  }
+
+  .page-note {
+    max-width: 880px;
+    margin: 0 auto 20px;
+    padding: 12px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-6); }
+
+  .card { background: var(--color-surface); border-radius: var(--radius-md); border: 1px solid var(--color-divider); }
+  .elev-sm { box-shadow: 0 1px 2px rgba(20,30,50,0.06), 0 1px 1px rgba(20,30,50,0.04); }
+  .text-muted { color: color-mix(in srgb, var(--color-text) 58%, transparent); }
+
+  table.table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table.table th, table.table td { padding: 10px 8px; border-bottom: 1px solid var(--color-divider); text-align: left; font-size: 13.5px; }
+  table.table thead th { font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); font-weight: 600; border-bottom: 2px solid var(--color-divider); }
+  table.table tbody tr:last-child td { border-bottom: none; }
+
+  header.hdr {
+    background: var(--color-accent-700);
+    color: var(--color-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin: 0 0 var(--space-6); }
+  .brand .cross { width: 20px; height: 20px; flex: none; color: #ffffff; }
+  .brand .mark { font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
+  header.hdr h1 { font-size: 32px; font-weight: 700; margin: 0 0 var(--space-3); line-height: 1.15; }
+  header.hdr .period { margin: 0; font-size: 14.5px; opacity: 0.85; }
+
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  .kpi-card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+  .kpi-card .label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+  .kpi-card .value { font-weight: 700; font-size: 30px; line-height: 1; }
+  .kpi-card .value .unit { font-size: 15px; opacity: 0.6; font-weight: 400; }
+  .badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--color-good-100); color: var(--color-good-800); }
+  .badge .arrow { font-size: 9px; }
+  .badge.bad { background: color-mix(in srgb, var(--color-bad) 14%, var(--color-surface)); color: var(--color-bad); }
+
+  .intro { font-size: 15.5px; line-height: 1.6; margin: 0; padding: 0 var(--space-6); }
+
+  .section-card { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+  .section-card h4 { margin: 0 0 4px; font-size: 15.5px; }
+
+  aside.trend {
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+    border-left: 4px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+  aside.trend .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-700); font-weight: 700; }
+  aside.trend p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.55; }
+  .bar-row { display: grid; grid-template-columns: 64px 1fr 78px; align-items: center; gap: var(--space-3); font-size: 13px; }
+  .bar-track { display: block; height: 9px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 8%, transparent); }
+  .bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--color-accent-500); }
+
+  .breakdown-heading { padding: 0 var(--space-6); }
+  .breakdown-heading h3 { margin: 0 0 4px; font-size: 17px; }
+  .breakdown-heading .sub { font-size: 13px; }
+  .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
+  .breakdown-card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+  .breakdown-card h6 { color: var(--color-accent); margin: 0; font-size: 13px; letter-spacing: 0.02em; }
+  .bd-head { display: grid; grid-template-columns: 1fr 92px 52px; gap: var(--space-2); padding-bottom: var(--space-2); border-bottom: 1px solid var(--color-divider); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+  .bd-head span:not(:first-child) { text-align: right; }
+  .bd-row { display: grid; grid-template-columns: 1fr 92px 52px; gap: var(--space-2); align-items: center; padding: var(--space-3) 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent); }
+  .bd-row:last-child { border-bottom: none; }
+  .bd-row .name-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .bd-row .name-col span:first-child { font-size: 14px; }
+  .bd-row .rank-track { display: block; height: 4px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 8%, transparent); }
+  .bd-row .rank-fill { display: block; height: 100%; border-radius: 999px; background: var(--color-accent-500); }
+  .bd-row .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bd-row .pct { text-align: right; font-variant-numeric: tabular-nums; }
+  .bd-row.other span { font-style: italic; }
+  .bd-row.other .num, .bd-row.other .pct { font-weight: 400; }
+
+  footer.ftr { border-top: 1px solid var(--color-divider); padding-top: var(--space-4); font-size: 12px; line-height: 1.6; color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+
+  @media (max-width: 560px) {
+    .kpis { grid-template-columns: 1fr; }
+    .breakdown-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="page-note">
+  <strong>Exemplo ilustrativo</strong> — empresa, valores e nomes fictícios, gerado só para mostrar o resultado visual do <code>Send-DailyKpiReport.ps1</code>. O e-mail real enviado pela rotina usa uma versão HTML baseada em tabelas (compatível com Outlook Desktop) com a mesma hierarquia visual.
+</div>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <p class="brand">
+      <svg class="cross" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
+        <rect x="10" y="0" width="8" height="8" />
+        <rect x="0" y="10" width="8" height="8" />
+        <rect x="20" y="10" width="8" height="8" />
+        <rect x="10" y="20" width="8" height="8" />
+      </svg>
+      <span class="mark">Acme</span>
+    </p>
+    <h1>Resumo Gerencial Diário — Julho/2026</h1>
+    <p class="period">Acumulado até 23/07/2026 (D-1), comparado ao mesmo período (até dia 23) de Junho/2026 · Base: Realizado</p>
+  </header>
+
+  <section class="kpis">
+    <div class="card elev-sm kpi-card">
+      <span class="label">Receita Bruta</span>
+      <div class="value">R&#8203;$&nbsp;18,44<span class="unit"> mi</span></div>
+      <span class="badge"><span class="arrow">▲</span>8,7% vs mês anterior</span>
+    </div>
+    <div class="card elev-sm kpi-card">
+      <span class="label">Lucro Bruto</span>
+      <div class="value">R$&nbsp;5,24<span class="unit"> mi</span></div>
+      <span class="badge"><span class="arrow">▲</span>11,9% vs mês anterior</span>
+    </div>
+    <div class="card elev-sm kpi-card">
+      <span class="label">Atingimento de Meta</span>
+      <div class="value">94,6<span class="unit">%</span></div>
+      <span class="badge"><span class="arrow">▲</span>6,4 p.p. vs mês anterior</span>
+    </div>
+  </section>
+
+  <p class="intro">Bom dia. Segue o resumo do mês corrente, com os principais indicadores acumulados até hoje e a comparação com o mesmo período do mês anterior.</p>
+
+  <section class="card elev-sm section-card">
+    <div>
+      <h4>Comparativo de indicadores</h4>
+      <span class="text-muted" style="font-size:13px;">Acumulado no mês · base Realizado</span>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th style="text-align:right;">Jul/2026 (até 23)</th>
+          <th style="text-align:right;">Jun/2026 (até 23)</th>
+          <th style="text-align:right;">Variação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600;">Receita Bruta</td>
+          <td style="text-align:right;">R$ 18.436.200</td>
+          <td style="text-align:right;" class="text-muted">R$ 16.958.400</td>
+          <td style="text-align:right;"><span class="badge"><span class="arrow">▲</span>8,7%</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Impostos</td>
+          <td style="text-align:right;">14,2%</td>
+          <td style="text-align:right;" class="text-muted">13,3%</td>
+          <td style="text-align:right;"><span class="badge bad"><span class="arrow">▲</span>0,9 p.p.</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Receita Líquida</td>
+          <td style="text-align:right;">R$ 15.812.900</td>
+          <td style="text-align:right;" class="text-muted">R$ 14.703.100</td>
+          <td style="text-align:right;"><span class="badge"><span class="arrow">▲</span>7,5%</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">CMV</td>
+          <td style="text-align:right;">R$ 10.568.800</td>
+          <td style="text-align:right;" class="text-muted">R$ 10.015.800</td>
+          <td style="text-align:right;"><span class="badge bad"><span class="arrow">▲</span>5,5%</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Lucro Bruto</td>
+          <td style="text-align:right;">R$ 5.244.100</td>
+          <td style="text-align:right;" class="text-muted">R$ 4.687.300</td>
+          <td style="text-align:right;"><span class="badge"><span class="arrow">▲</span>11,9%</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Margem Bruta</td>
+          <td style="text-align:right;">33,2%</td>
+          <td style="text-align:right;" class="text-muted">31,9%</td>
+          <td style="text-align:right;"><span class="badge"><span class="arrow">▲</span>1,3 p.p.</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600;">Atingimento de Meta</td>
+          <td style="text-align:right;">94,6%</td>
+          <td style="text-align:right;" class="text-muted">88,2%</td>
+          <td style="text-align:right;"><span class="badge"><span class="arrow">▲</span>6,4 p.p.</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <aside class="trend">
+    <span class="eyebrow">Tendência de fechamento do mês</span>
+    <p>No ritmo atual de faturamento por dia útil, a projeção de fechamento de Julho/2026 é de R$ 23,98 mi, 2,1% abaixo da meta orçada de R$ 24,50 mi.</p>
+    <div style="margin-top:var(--space-4); display:flex; flex-direction:column; gap:10px; max-width:460px;">
+      <div class="bar-row">
+        <span class="text-muted">Projeção</span>
+        <span class="bar-track"><span class="bar-fill" style="width:97.9%;"></span></span>
+        <span style="text-align:right; font-weight:600; font-variant-numeric:tabular-nums;">R$ 23,98 mi</span>
+      </div>
+      <div class="bar-row">
+        <span class="text-muted">Meta</span>
+        <span class="bar-track"><span class="bar-fill" style="width:100%; opacity:0.45;"></span></span>
+        <span class="text-muted" style="text-align:right; font-weight:600; font-variant-numeric:tabular-nums;">R$ 24,50 mi</span>
+      </div>
+    </div>
+  </aside>
+
+  <section style="display:flex; flex-direction:column; gap:var(--space-6);">
+    <div class="breakdown-heading">
+      <h3>Detalhamento — Julho/2026 <span class="text-muted" style="font-size:15px; font-weight:400;">(até dia 23)</span></h3>
+      <span class="text-muted sub">Receita Bruta e Margem Bruta por Gerente, UF, Unidade e Tipo de Faturamento · top 5 de cada, ordenado por Receita</span>
+    </div>
+
+    <div class="breakdown-grid">
+
+      <div class="card elev-sm breakdown-card">
+        <h6>Por Gerente</h6>
+        <div>
+          <div class="bd-head"><span>Gerente</span><span>Receita</span><span>Margem</span></div>
+          <div class="bd-row"><div class="name-col"><span>Gerência Sudeste</span><span class="rank-track"><span class="rank-fill" style="width:100%;"></span></span></div><span class="num">R$ 6,12 mi</span><span class="pct text-muted">34,8%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Gerência Nordeste</span><span class="rank-track"><span class="rank-fill" style="width:73%;"></span></span></div><span class="num">R$ 4,47 mi</span><span class="pct text-muted">31,2%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Gerência Sul</span><span class="rank-track"><span class="rank-fill" style="width:50%;"></span></span></div><span class="num">R$ 3,08 mi</span><span class="pct text-muted">35,6%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Gerência Centro-Oeste</span><span class="rank-track"><span class="rank-fill" style="width:43%;"></span></span></div><span class="num">R$ 2,61 mi</span><span class="pct text-muted">29,7%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Gerência Norte</span><span class="rank-track"><span class="rank-fill" style="width:24%;"></span></span></div><span class="num">R$ 1,44 mi</span><span class="pct text-muted">27,9%</span></div>
+          <div class="bd-row other"><span class="text-muted">Outros</span><span class="num text-muted">R$ 0,68 mi</span><span class="pct text-muted">30,1%</span></div>
+        </div>
+      </div>
+
+      <div class="card elev-sm breakdown-card">
+        <h6>Por UF</h6>
+        <div>
+          <div class="bd-head"><span>UF</span><span>Receita</span><span>Margem</span></div>
+          <div class="bd-row"><div class="name-col"><span>SP</span><span class="rank-track"><span class="rank-fill" style="width:100%;"></span></span></div><span class="num">R$ 5,64 mi</span><span class="pct text-muted">33,9%</span></div>
+          <div class="bd-row"><div class="name-col"><span>RJ</span><span class="rank-track"><span class="rank-fill" style="width:70%;"></span></span></div><span class="num">R$ 3,92 mi</span><span class="pct text-muted">32,4%</span></div>
+          <div class="bd-row"><div class="name-col"><span>BA</span><span class="rank-track"><span class="rank-fill" style="width:49%;"></span></span></div><span class="num">R$ 2,77 mi</span><span class="pct text-muted">30,8%</span></div>
+          <div class="bd-row"><div class="name-col"><span>PE</span><span class="rank-track"><span class="rank-fill" style="width:38%;"></span></span></div><span class="num">R$ 2,15 mi</span><span class="pct text-muted">34,1%</span></div>
+          <div class="bd-row"><div class="name-col"><span>MG</span><span class="rank-track"><span class="rank-fill" style="width:30%;"></span></span></div><span class="num">R$ 1,68 mi</span><span class="pct text-muted">28,6%</span></div>
+          <div class="bd-row other"><span class="text-muted">Outros</span><span class="num text-muted">R$ 2,24 mi</span><span class="pct text-muted">31,5%</span></div>
+        </div>
+      </div>
+
+      <div class="card elev-sm breakdown-card">
+        <h6>Por Unidade</h6>
+        <div>
+          <div class="bd-head"><span>Unidade</span><span>Receita</span><span>Margem</span></div>
+          <div class="bd-row"><div class="name-col"><span>Unidade Centro</span><span class="rank-track"><span class="rank-fill" style="width:100%;"></span></span></div><span class="num">R$ 2,84 mi</span><span class="pct text-muted">35,2%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Unidade Norte</span><span class="rank-track"><span class="rank-fill" style="width:81%;"></span></span></div><span class="num">R$ 2,31 mi</span><span class="pct text-muted">32,0%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Unidade Zona Sul</span><span class="rank-track"><span class="rank-fill" style="width:69%;"></span></span></div><span class="num">R$ 1,96 mi</span><span class="pct text-muted">29,4%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Unidade Leste</span><span class="rank-track"><span class="rank-fill" style="width:54%;"></span></span></div><span class="num">R$ 1,52 mi</span><span class="pct text-muted">33,7%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Unidade Oeste</span><span class="rank-track"><span class="rank-fill" style="width:43%;"></span></span></div><span class="num">R$ 1,21 mi</span><span class="pct text-muted">31,1%</span></div>
+          <div class="bd-row other"><span class="text-muted">Outros (56 unidades)</span><span class="num text-muted">R$ 8,56 mi</span><span class="pct text-muted">33,3%</span></div>
+        </div>
+      </div>
+
+      <div class="card elev-sm breakdown-card">
+        <h6>Por Tipo de Faturamento</h6>
+        <div>
+          <div class="bd-head"><span>Tipo</span><span>Receita</span><span>Margem</span></div>
+          <div class="bd-row"><div class="name-col"><span>Fluxo Normal</span><span class="rank-track"><span class="rank-fill" style="width:100%;"></span></span></div><span class="num">R$ 13,92 mi</span><span class="pct text-muted">34,0%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Venda Direta</span><span class="rank-track"><span class="rank-fill" style="width:21%;"></span></span></div><span class="num">R$ 2,88 mi</span><span class="pct text-muted">27,5%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Baixa de Pendência</span><span class="rank-track"><span class="rank-fill" style="width:8%;"></span></span></div><span class="num">R$ 1,17 mi</span><span class="pct text-muted">36,9%</span></div>
+          <div class="bd-row"><div class="name-col"><span>Devolução</span><span class="rank-track"><span class="rank-fill" style="width:3%; background:var(--color-bad);"></span></span></div><span class="num" style="color:var(--color-bad);">-R$ 0,44 mi</span><span class="pct text-muted">—</span></div>
+          <div class="bd-row other"><span class="text-muted">Outros</span><span class="num text-muted">R$ 0,91 mi</span><span class="pct text-muted">30,2%</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="ftr">
+    Gerado automaticamente às 08:00, sempre com dados até D-1 (ou até a última sexta-feira, se hoje for segunda-feira).
+  </footer>
+
+</div>
