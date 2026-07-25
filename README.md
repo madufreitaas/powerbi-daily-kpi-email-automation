@@ -18,9 +18,20 @@ Todo dia, às 8h da manhã:
 
 Veja o resultado completo, interativo, em [sample-email-preview.html](./sample-email-preview.html) (dados fictícios), ou abra a versão publicada: [link do GitHub Pages a definir].
 
+### Painel web complementar
+
+O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). Para quem quer explorar mais, [dashboard-preview.html](./dashboard-preview.html) é uma versão web complementar dos mesmos dados, pensada com foco em UX/IA (arquitetura da informação):
+
+- Uma frase de insight sintetizado no topo (o que mudou e onde prestar atenção), antes de qualquer número
+- KPIs agrupados por tema (resultado do mês, meta do mês) em vez de uma fileira solta
+- Navegação por âncora fixa no topo para pular direto a uma seção
+- Linhas da tabela comparativa marcadas com ⚠ quando a variação foi desfavorável
+- Tabelas de detalhamento ordenáveis (por receita ou por margem), com barra de ranking inline
+- Uma legenda explícita explicando o significado das cores e por que Impostos/CMV usam a lógica invertida (subir é ruim, não bom)
+
 ## Por que isso não foi trivial
 
-Um script que "chama uma API e manda e-mail" parece simples até esbarrar em algumas peculiaridades reais de Power BI, Azure AD e Windows PowerShell. Três problemas concretos que apareceram construindo isso:
+Um script que "chama uma API e manda e-mail" parece simples até esbarrar em algumas peculiaridades reais de Power BI, Azure AD e Windows PowerShell. Quatro problemas concretos que apareceram construindo isso:
 
 ### 1. Row-Level Security bloqueia consultas de Service Principal
 
@@ -37,6 +48,10 @@ A causa: `Invoke-RestMethod` no Windows PowerShell 5.1 codifica o corpo da requi
 ### 3. Regra de data "D-1 útil"
 
 O relatório nunca usa os dados do próprio dia (parciais/incompletos). Ele sempre usa o fechamento do dia anterior, exceto quando o envio cai numa segunda-feira, caso em que usa a sexta-feira anterior (para manter a mesma quantidade de dias úteis na comparação entre o mês atual e o mês anterior).
+
+### 4. Verde e vermelho não bastam (nem para quem enxerga bem)
+
+Ao montar o painel web complementar, testei a paleta de cores de status (favorável/atenção/desfavorável) com o mesmo tipo de checagem que qualquer paleta categórica deveria passar: distância de cor sob simulação de daltonismo (protanopia e deuteranopia). O primeiro trio que tentei, um verde, um âmbar e um vermelho nos tons "óbvios" de semáforo, ficava com distância de cor praticamente zero entre os pares sob simulação: para quem tem esses tipos de daltonismo, as três cores colapsam quase no mesmo ponto. Troquei o verde por um verde-azulado (teal) para tirar o par do eixo de confusão vermelho-verde, e mantive o que já era estrutural desde o início: a cor nunca é a única pista, toda variação também tem uma seta (▲/▼) e, no painel web, um ícone de atenção (⚠) nas linhas desfavoráveis.
 
 ## Canais de envio
 
