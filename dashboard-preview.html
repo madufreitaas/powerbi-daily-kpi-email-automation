@@ -14,12 +14,17 @@
     --accent: #2a78d6;
     --accent-soft: #cde2fb;
     --accent-tint: #eaf2fd;
+    --accent-mid: #a6c6ee;
+    --accent-border: #b3d1f3;
     --good-ink: #006300;
     --good-tint: #e4f2e4;
+    --good-border: #b9dcb9;
     --warn-ink: #8a5808;
     --warn-tint: #fbf0dc;
+    --warn-border: #e8cf9a;
     --bad-ink: #b12e2e;
     --bad-tint: #f9e7e7;
+    --bad-border: #e9b8b8;
     --r-lg: 14px;
     --r-md: 10px;
     --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -38,12 +43,17 @@
     --accent: #3987e5;
     --accent-soft: #1d3d5c;
     --accent-tint: #16283a;
+    --accent-mid: #254b75;
+    --accent-border: #2c4f74;
     --good-ink: #4fc47a;
     --good-tint: #14301d;
+    --good-border: #2c5b3a;
     --warn-ink: #d99b3f;
     --warn-tint: #33270f;
+    --warn-border: #5c4a1e;
     --bad-ink: #e2727a;
     --bad-tint: #351a1c;
+    --bad-border: #6b3a3d;
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) {
@@ -97,10 +107,12 @@
     font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
   }
 
+  /* Sem backdrop-filter aqui de proposito: blur em elemento sticky cria uma
+     camada de composicao que, em algumas configuracoes de GPU do Chromium,
+     faz o conteudo abaixo deixar de ser pintado. Fundo solido resolve. */
   .topbar {
     position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--surface) 94%, transparent);
-    backdrop-filter: blur(8px);
+    background: var(--surface);
     border-bottom: 1px solid var(--line);
     margin-top: 12px;
   }
@@ -136,7 +148,7 @@
   .insight {
     margin-top: 22px; padding: 17px 20px;
     background: var(--accent-tint);
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border: 1px solid var(--accent-border);
     border-radius: var(--r-lg);
   }
   .insight p { margin: 0; font-size: 15px; line-height: 1.6; }
@@ -149,9 +161,9 @@
     background: var(--surface); border: 1px solid var(--line);
   }
   .chip .ico { font-size: 10px; line-height: 1; }
-  .chip.good { color: var(--good-ink); background: var(--good-tint); border-color: color-mix(in srgb, var(--good-ink) 25%, transparent); }
-  .chip.warn { color: var(--warn-ink); background: var(--warn-tint); border-color: color-mix(in srgb, var(--warn-ink) 30%, transparent); }
-  .chip.bad  { color: var(--bad-ink);  background: var(--bad-tint);  border-color: color-mix(in srgb, var(--bad-ink) 28%, transparent); }
+  .chip.good { color: var(--good-ink); background: var(--good-tint); border-color: var(--good-border); }
+  .chip.warn { color: var(--warn-ink); background: var(--warn-tint); border-color: var(--warn-border); }
+  .chip.bad  { color: var(--bad-ink);  background: var(--bad-tint);  border-color: var(--bad-border); }
 
   /* seções */
   section { margin-top: 42px; scroll-margin-top: 62px; }
@@ -187,8 +199,10 @@
   .key.meta { background: var(--ink-muted); }
   .key.proj { background: transparent; border-top: 2px dashed var(--accent); height: 0; }
 
-  .plot-wrap { position: relative; margin-top: 6px; }
-  .plot { display: block; width: 100%; height: auto; overflow: visible; }
+  .plot-wrap { position: relative; margin-top: 6px; min-height: 200px; }
+  /* aspect-ratio explicito para o SVG nunca colapsar para altura zero,
+     independente de como o navegador resolva a razao intrinseca do viewBox */
+  .plot { display: block; width: 100%; height: auto; aspect-ratio: 700 / 212; overflow: visible; }
   .grid-line { stroke: var(--line-soft); stroke-width: 1; }
   .axis-line { stroke: var(--line); stroke-width: 1; }
   .tick { font-size: 10.5px; fill: var(--ink-muted); font-family: var(--font); font-variant-numeric: tabular-nums; }
@@ -223,7 +237,7 @@
     border-radius: 999px; padding: 5px 11px; cursor: pointer; font-family: var(--font);
   }
   .toggle:hover { color: var(--ink); border-color: var(--ink-muted); }
-  .toggle[aria-pressed="true"] { background: var(--accent-tint); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .toggle[aria-pressed="true"] { background: var(--accent-tint); color: var(--accent); border-color: var(--accent-border); }
 
   .tbl-wrap { overflow-x: auto; margin-top: 14px; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
@@ -244,13 +258,13 @@
   }
   .meter-real { background: var(--accent); height: 100%; }
   .meter-gap { width: 2px; background: var(--surface); height: 100%; flex: none; }
-  .meter-proj { background: color-mix(in srgb, var(--accent) 42%, var(--surface)); height: 100%; }
+  .meter-proj { background: var(--accent-mid); height: 100%; }
   .meter-scale { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--ink-2); }
   .meter-legend { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 13px; }
   .meter-legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
   .sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
   .sw.a { background: var(--accent); }
-  .sw.b { background: color-mix(in srgb, var(--accent) 42%, var(--surface)); }
+  .sw.b { background: var(--accent-mid); }
   .sw.c { background: var(--accent-soft); }
 
   /* breakdown */
