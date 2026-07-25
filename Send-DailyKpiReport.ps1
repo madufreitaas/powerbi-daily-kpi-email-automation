@@ -1,33 +1,41 @@
 ﻿<#
 .SYNOPSIS
     Consulta um dataset do Power BI Service via API REST, monta um resumo
-    gerencial diario em HTML (compativel com Outlook) e envia por e-mail
-    via Microsoft Graph.
+    gerencial diario e envia por e-mail (Microsoft Graph), Microsoft Teams
+    (Incoming Webhook) e/ou WhatsApp (API oficial da Meta / WhatsApp
+    Business Platform).
 
 .DESCRIPTION
     Pipeline pensado para rodar todo dia via Agendador de Tarefas do
     Windows (ou qualquer scheduler). Nao depende do Power BI Desktop nem
     de nenhuma automacao dentro do proprio relatorio - so consulta o
-    modelo semantico ja publicado, calcula os indicadores e envia.
+    modelo semantico ja publicado, calcula os indicadores e envia pelos
+    canais escolhidos em -Canais.
 
     Configuracao via variaveis de ambiente (nada de credencial no codigo):
-      PBI_TENANT_ID       - Tenant ID do Azure AD
-      PBI_CLIENT_ID       - Client ID do App Registration
-      PBI_WORKSPACE_ID    - ID do workspace do Power BI
-      PBI_DATASET_ID      - ID do semantic model / dataset
-      PBI_SENDER_UPN      - caixa de e-mail que envia o relatorio
+      PBI_TENANT_ID          - Tenant ID do Azure AD
+      PBI_CLIENT_ID          - Client ID do App Registration
+      PBI_WORKSPACE_ID       - ID do workspace do Power BI
+      PBI_DATASET_ID         - ID do semantic model / dataset
+      PBI_SENDER_UPN         - caixa de e-mail que envia o relatorio (canal Email)
+      TEAMS_WEBHOOK_URL      - URL do Incoming Webhook do canal do Teams (canal Teams)
+      WHATSAPP_PHONE_NUMBER_ID - Phone Number ID da WhatsApp Business Platform (canal WhatsApp)
+      WHATSAPP_TEMPLATE_NAME   - nome do template de mensagem aprovado (canal WhatsApp)
 
-    Segredos (Client Secret do Graph, Refresh Token do Power BI) ficam em
-    arquivos fora do repositorio, em $env:USERPROFILE\.secrets\, nunca
-    versionados. Veja o README para o passo a passo de configuracao.
+    Segredos (Client Secret do Graph, Refresh Token do Power BI, Access
+    Token do WhatsApp) ficam em arquivos fora do repositorio, em
+    $env:USERPROFILE\.secrets\, nunca versionados. Veja o README para o
+    passo a passo de configuracao de cada canal.
 
 .NOTES
     Este script foi anonimizado para fins de portfolio. Nomes de empresa,
-    e-mails e IDs sao ficticios/placeholders - substitua pelos seus.
+    e-mails, telefones e IDs sao ficticios/placeholders - substitua pelos seus.
 #>
 
 param(
-    [string[]]$Destinatarios = @("destinatario@suaempresa.com.br")
+    [string[]]$Canais = @("Email"),
+    [string[]]$Destinatarios = @("destinatario@suaempresa.com.br"),
+    [string[]]$DestinatariosWhatsApp = @("5511999999999")
 )
 
 $ErrorActionPreference = "Stop"
@@ -495,29 +503,120 @@ $html | Set-Content -Path $htmlPath -Encoding UTF8
 Write-Output "Preview salvo em: $htmlPath"
 
 # ============================================================
-# 8. ENVIO VIA MICROSOFT GRAPH
+# 8. ENVIO PELOS CANAIS ESCOLHIDOS (-Canais: Email, Teams, WhatsApp)
 # ============================================================
-$clientSecret = Read-SecretValue "$secretsDir\pbi.env" "CLIENT_SECRET"
-$graphTokenResp = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token" -Method Post -Body @{
-    grant_type    = "client_credentials"
-    client_id     = $clientId
-    client_secret = $clientSecret
-    scope         = "https://graph.microsoft.com/.default"
-}
-$graphToken = $graphTokenResp.access_token
-Write-Output "Token Microsoft Graph obtido."
 
-$mailPayload = @{
-    message = @{
-        subject = "Resumo Gerencial Diário — $mesAtualNome (até dia $diaCorte)"
-        body = @{ contentType = "HTML"; content = $html }
-        toRecipients = @($Destinatarios | ForEach-Object { @{ emailAddress = @{ address = $_ } } })
+function Send-EmailSummary {
+    $clientSecret = Read-SecretValue "$secretsDir\pbi.env" "CLIENT_SECRET"
+    $graphTokenResp = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token" -Method Post -Body @{
+        grant_type    = "client_credentials"
+        client_id     = $clientId
+        client_secret = $clientSecret
+        scope         = "https://graph.microsoft.com/.default"
     }
-    saveToSentItems = "true"
-} | ConvertTo-Json -Depth 6
+    $graphToken = $graphTokenResp.access_token
+    Write-Output "Token Microsoft Graph obtido."
 
-Write-Output "Enviando e-mail para: $($Destinatarios -join ', ')"
-$mailBodyBytes = [System.Text.Encoding]::UTF8.GetBytes($mailPayload)
-Invoke-RestMethod -Uri "https://graph.microsoft.com/v1.0/users/$senderUpn/sendMail" `
-    -Method Post -Headers @{ Authorization = "Bearer $graphToken" } -Body $mailBodyBytes -ContentType "application/json; charset=utf-8"
-Write-Output "E-mail enviado com sucesso!"
+    $mailPayload = @{
+        message = @{
+            subject = "Resumo Gerencial Diário — $mesAtualNome (até dia $diaCorte)"
+            body = @{ contentType = "HTML"; content = $html }
+            toRecipients = @($Destinatarios | ForEach-Object { @{ emailAddress = @{ address = $_ } } })
+        }
+        saveToSentItems = "true"
+    } | ConvertTo-Json -Depth 6
+
+    Write-Output "Enviando e-mail para: $($Destinatarios -join ', ')"
+    $mailBodyBytes = [System.Text.Encoding]::UTF8.GetBytes($mailPayload)
+    Invoke-RestMethod -Uri "https://graph.microsoft.com/v1.0/users/$senderUpn/sendMail" `
+        -Method Post -Headers @{ Authorization = "Bearer $graphToken" } -Body $mailBodyBytes -ContentType "application/json; charset=utf-8"
+    Write-Output "E-mail enviado com sucesso!"
+}
+
+function Send-TeamsSummary {
+    # Canal mais simples de configurar: um Incoming Webhook criado direto
+    # no canal do Teams (Conector > Incoming Webhook), sem precisar de
+    # App Registration nem consentimento de admin. O card usa o formato
+    # legado "MessageCard", suportado por qualquer webhook de canal.
+    $webhookUrl = $env:TEAMS_WEBHOOK_URL
+    if ([string]::IsNullOrWhiteSpace($webhookUrl)) {
+        Write-Output "TEAMS_WEBHOOK_URL nao configurado, pulando envio ao Teams."
+        return
+    }
+
+    $card = @{
+        "@type"    = "MessageCard"
+        "@context" = "http://schema.org/extensions"
+        themeColor = "0B4F8A"
+        summary    = "Resumo Gerencial Diário"
+        sections   = @(
+            @{
+                activityTitle = "Resumo Gerencial Diário — $mesAtualNome (até dia $diaCorte)"
+                facts = @(
+                    @{ name = "Receita Bruta";        value = (Format-ReaisMi $receitaBrutaAtual) + " ($(Format-Pct ([Math]::Abs($deltaReceitaBruta))) vs mês anterior)" }
+                    @{ name = "Lucro Bruto";          value = (Format-ReaisMi $lucroBrutoAtual) + " ($(Format-Pct ([Math]::Abs($deltaLucroBruto))) vs mês anterior)" }
+                    @{ name = "Atingimento de Meta";  value = Format-Pct $atingimentoAtual }
+                    @{ name = "Tendência de fechamento"; value = Format-ReaisMi $tendencia }
+                )
+                markdown = $true
+            }
+        )
+    } | ConvertTo-Json -Depth 8
+
+    Write-Output "Enviando resumo ao Teams..."
+    $cardBytes = [System.Text.Encoding]::UTF8.GetBytes($card)
+    Invoke-RestMethod -Uri $webhookUrl -Method Post -Body $cardBytes -ContentType "application/json; charset=utf-8"
+    Write-Output "Mensagem enviada ao Teams com sucesso!"
+}
+
+function Send-WhatsAppSummary {
+    # Canal via API oficial (WhatsApp Business Platform / Cloud API da
+    # Meta). Mensagens de negocio enviadas por iniciativa da empresa (nao
+    # em resposta a uma mensagem do cliente) precisam usar um TEMPLATE de
+    # mensagem previamente criado e aprovado no Meta Business Manager -
+    # nao da para mandar texto livre nesse cenario. O exemplo abaixo
+    # assume um template simples com 4 parametros de corpo, na ordem:
+    # Receita Bruta, Lucro Bruto, Atingimento de Meta, Tendencia.
+    $phoneNumberId = $env:WHATSAPP_PHONE_NUMBER_ID
+    $templateName  = $env:WHATSAPP_TEMPLATE_NAME
+    if ([string]::IsNullOrWhiteSpace($phoneNumberId) -or [string]::IsNullOrWhiteSpace($templateName)) {
+        Write-Output "WHATSAPP_PHONE_NUMBER_ID ou WHATSAPP_TEMPLATE_NAME nao configurado, pulando envio ao WhatsApp."
+        return
+    }
+    $accessToken = Read-SecretValue "$secretsDir\whatsapp.env" "ACCESS_TOKEN"
+
+    $parametros = @(
+        (Format-ReaisMi $receitaBrutaAtual),
+        (Format-ReaisMi $lucroBrutoAtual),
+        (Format-Pct $atingimentoAtual),
+        (Format-ReaisMi $tendencia)
+    )
+
+    foreach ($destino in $DestinatariosWhatsApp) {
+        $payload = @{
+            messaging_product = "whatsapp"
+            to = $destino
+            type = "template"
+            template = @{
+                name = $templateName
+                language = @{ code = "pt_BR" }
+                components = @(
+                    @{
+                        type = "body"
+                        parameters = ($parametros | ForEach-Object { @{ type = "text"; text = $_ } })
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 8
+
+        Write-Output "Enviando WhatsApp para: $destino"
+        $payloadBytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
+        Invoke-RestMethod -Uri "https://graph.facebook.com/v19.0/$phoneNumberId/messages" `
+            -Method Post -Headers @{ Authorization = "Bearer $accessToken" } -Body $payloadBytes -ContentType "application/json; charset=utf-8"
+    }
+    Write-Output "Mensagens de WhatsApp enviadas com sucesso!"
+}
+
+if ($Canais -contains "Email")    { Send-EmailSummary }
+if ($Canais -contains "Teams")    { Send-TeamsSummary }
+if ($Canais -contains "WhatsApp") { Send-WhatsAppSummary }

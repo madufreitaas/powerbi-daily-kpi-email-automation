@@ -38,11 +38,27 @@ A causa: `Invoke-RestMethod` no Windows PowerShell 5.1 codifica o corpo da requi
 
 O relatório nunca usa os dados do próprio dia (parciais/incompletos). Ele sempre usa o fechamento do dia anterior, exceto quando o envio cai numa segunda-feira, caso em que usa a sexta-feira anterior (para manter a mesma quantidade de dias úteis na comparação entre o mês atual e o mês anterior).
 
+## Canais de envio
+
+O parâmetro `-Canais` controla por onde o resumo sai, pode combinar mais de um: `-Canais Email,Teams,WhatsApp`. Cada canal tem sua própria complexidade de configuração:
+
+| Canal | Configuração necessária | Complexidade |
+|---|---|---|
+| E-mail | App Registration com `Mail.Send` (Microsoft Graph), consentimento de admin | Baixa |
+| Teams | Um Incoming Webhook criado direto no canal do Teams (menu "Conectores"), sem precisar de App Registration | Baixa |
+| WhatsApp | Conta no WhatsApp Business Platform (Meta), Phone Number ID, e um template de mensagem pré-aprovado no Meta Business Manager | Alta |
+
+O envio ao Teams usa um card simples (formato `MessageCard`) com os KPIs principais, sem o detalhamento completo por dimensão.
+
+O WhatsApp é o canal mais trabalhoso de configurar de verdade: a API oficial (WhatsApp Business Platform / Cloud API da Meta) só permite que uma empresa inicie a conversa (fora de uma janela de atendimento de 24h) usando um "template de mensagem" cadastrado e aprovado previamente no Meta Business Manager, com um número fixo de variáveis de texto. Não dá para mandar HTML nem texto livre nesse cenário. O script já vem preparado para chamar um template com 4 parâmetros (Receita Bruta, Lucro Bruto, Atingimento de Meta e Tendência), mas o template em si precisa existir e estar aprovado antes de rodar. As variáveis de ambiente `WHATSAPP_PHONE_NUMBER_ID` e `WHATSAPP_TEMPLATE_NAME`, mais o Access Token em `.secrets\whatsapp.env`, controlam esse canal.
+
 ## Stack
 
 - PowerShell (Windows PowerShell 5.1): orquestração, HTTP, formatação
 - Power BI REST API (`Execute Queries`): consulta DAX direta ao modelo semântico publicado
 - Microsoft Graph API (`sendMail`): envio do e-mail
+- Microsoft Teams (Incoming Webhook): envio de card resumido ao canal
+- WhatsApp Business Platform (Cloud API da Meta): envio via template de mensagem aprovado
 - DAX: reaproveita as medidas já publicadas no modelo (nenhuma lógica de negócio duplicada em código)
 - Agendador de Tarefas do Windows: disparo diário
 
