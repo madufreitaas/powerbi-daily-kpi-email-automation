@@ -20,14 +20,25 @@ Veja o resultado completo, interativo, em [sample-email-preview.html](./sample-e
 
 ### Painel web complementar
 
-O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). Para quem quer explorar mais, [dashboard-preview.html](./dashboard-preview.html) é uma versão web complementar dos mesmos dados, pensada com foco em UX/IA (arquitetura da informação):
+O e-mail em si continua deliberadamente simples (HTML de tabelas, compatível com Outlook Desktop). Para quem quer explorar mais, [dashboard-preview.html](./dashboard-preview.html) é uma versão web complementar dos mesmos dados, com foco em arquitetura da informação e acessibilidade.
 
-- Uma frase de insight sintetizado no topo (o que mudou e onde prestar atenção), antes de qualquer número
-- KPIs agrupados por tema (resultado do mês, meta do mês) em vez de uma fileira solta
-- Navegação por âncora fixa no topo para pular direto a uma seção
-- Linhas da tabela comparativa marcadas com ⚠ quando a variação foi desfavorável
-- Tabelas de detalhamento ordenáveis (por receita ou por margem), com barra de ranking inline
-- Uma legenda explícita explicando o significado das cores e por que Impostos/CMV usam a lógica invertida (subir é ruim, não bom)
+![Painel web complementar](./dashboard-preview.png)
+
+Hierarquia de leitura, do geral ao específico:
+
+1. Um bloco de insight que resume em uma frase o que mudou e por quê, seguido de chips com os quatro pontos que merecem atenção
+2. Um número protagonista (receita bruta acumulada, em 50px) com três indicadores de apoio ao lado, em vez de cinco cartões de peso visual igual
+3. Um gráfico de linha da receita mensal contra a meta, com Janeiro a Junho fechados e Julho como projeção tracejada, já que o mês ainda está em curso
+4. Um medidor de projeção que mostra numa única barra o que já foi realizado, o que a projeção acrescenta e o quanto falta para a meta
+5. A tabela financeira completa e o detalhamento por dimensão
+
+Decisões de acessibilidade e de visualização:
+
+- Cor nunca carrega informação sozinha: toda variação tem seta (▲ ▼) e as linhas desfavoráveis levam ⚠
+- O gráfico tem uma tabela equivalente, acessível por um botão, que é o caminho completo para leitor de tela e para quem não consegue ler o gráfico
+- As barras de ranking do detalhamento acompanham a métrica ativa: ao ordenar por margem, elas passam a representar margem, e não a receita
+- Tema claro e escuro definidos separadamente, cada um com suas cores validadas contra a superfície correspondente
+- Respeita `prefers-reduced-motion` e tem estados de foco visíveis para navegação por teclado
 
 ## Por que isso não foi trivial
 

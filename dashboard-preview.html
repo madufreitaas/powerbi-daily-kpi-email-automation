@@ -1,65 +1,75 @@
-<title>Painel — Resumo Gerencial Diário</title>
+<title>Painel Gerencial Diário</title>
 <style>
   :root {
-    --bg: #eef2f3;
+    color-scheme: light;
+    --bg: #f1f4f6;
     --surface: #ffffff;
-    --surface-2: #f5f7f8;
-    --ink: #16232f;
-    --ink-soft: #57697a;
-    --ink-faint: #8998a3;
-    --line: #dde3e7;
-    --accent: #0b4f8a;
-    --accent-100: #e6eef6;
-    --good: #0e7a6b;
-    --good-100: #e3f2ef;
-    --warning: #b5720e;
-    --warning-100: #f8eede;
-    --bad: #af2a34;
-    --bad-100: #f7e6e7;
-    --radius-lg: 14px;
-    --radius-md: 10px;
-    --radius-sm: 7px;
-    --font: "Segoe UI", "Segoe UI Variable", Calibri, Roboto, Helvetica, Arial, sans-serif;
+    --surface-2: #f4f7f9;
+    --ink: #14212c;
+    --ink-2: #57697a;
+    --ink-muted: #8998a3;
+    --line: #dce3e8;
+    --line-soft: #edf1f4;
+    --chrome: #0b4f8a;
+    --accent: #2a78d6;
+    --accent-soft: #cde2fb;
+    --accent-tint: #eaf2fd;
+    --good-ink: #006300;
+    --good-tint: #e4f2e4;
+    --warn-ink: #8a5808;
+    --warn-tint: #fbf0dc;
+    --bad-ink: #b12e2e;
+    --bad-tint: #f9e7e7;
+    --r-lg: 14px;
+    --r-md: 10px;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
   :root[data-theme="dark"] {
-    --bg: #0e1417;
+    color-scheme: dark;
+    --bg: #0d1418;
     --surface: #171f24;
-    --surface-2: #1d262c;
+    --surface-2: #1e272d;
     --ink: #e9eef1;
-    --ink-soft: #9fb0ba;
-    --ink-faint: #647680;
-    --line: #2b363c;
-    --accent: #6ba6e0;
-    --accent-100: #16283a;
-    --good: #4fb3a0;
-    --good-100: #12302b;
-    --warning: #d99b3f;
-    --warning-100: #33270f;
-    --bad: #e2727a;
-    --bad-100: #3a1c1f;
+    --ink-2: #9fb0ba;
+    --ink-muted: #7b8c96;
+    --line: #2a353c;
+    --line-soft: #222c32;
+    --chrome: #12384f;
+    --accent: #3987e5;
+    --accent-soft: #1d3d5c;
+    --accent-tint: #16283a;
+    --good-ink: #4fc47a;
+    --good-tint: #14301d;
+    --warn-ink: #d99b3f;
+    --warn-tint: #33270f;
+    --bad-ink: #e2727a;
+    --bad-tint: #351a1c;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0e1417;
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --bg: #0d1418;
       --surface: #171f24;
-      --surface-2: #1d262c;
+      --surface-2: #1e272d;
       --ink: #e9eef1;
-      --ink-soft: #9fb0ba;
-      --ink-faint: #647680;
-      --line: #2b363c;
-      --accent: #6ba6e0;
-      --accent-100: #16283a;
-      --good: #4fb3a0;
-      --good-100: #12302b;
-      --warning: #d99b3f;
-      --warning-100: #33270f;
-      --bad: #e2727a;
-      --bad-100: #3a1c1f;
+      --ink-2: #9fb0ba;
+      --ink-muted: #7b8c96;
+      --line: #2a353c;
+      --line-soft: #222c32;
+      --chrome: #12384f;
+      --accent: #3987e5;
+      --accent-soft: #1d3d5c;
+      --accent-tint: #16283a;
+      --good-ink: #4fc47a;
+      --good-tint: #14301d;
+      --warn-ink: #d99b3f;
+      --warn-tint: #33270f;
+      --bad-ink: #e2727a;
+      --bad-tint: #351a1c;
     }
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
@@ -67,386 +77,625 @@
     font-family: var(--font);
     -webkit-font-smoothing: antialiased;
   }
-  .page { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
-
-  .disclaimer {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 10px 16px;
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    line-height: 1.5;
+  a { color: var(--accent); }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
-  .disclaimer strong { color: var(--ink); font-weight: 600; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
 
-  /* ---- barra de utilidade / navegação âncora ---- */
-  .utility-bar {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
-    backdrop-filter: blur(6px);
+  .note {
+    max-width: 940px; margin: 0 auto; padding: 12px 20px 0;
+    font-size: 12.5px; line-height: 1.55; color: var(--ink-2);
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
+    backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
-    margin-bottom: 28px;
+    margin-top: 12px;
   }
-  .utility-bar nav {
-    max-width: 920px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 16px;
-    overflow-x: auto;
+  .topbar nav {
+    max-width: 940px; margin: 0 auto;
+    display: flex; align-items: center; gap: 2px;
+    padding: 9px 20px; overflow-x: auto;
   }
-  .utility-bar .brand-mini { display: flex; align-items: center; gap: 7px; margin-right: 12px; flex: none; }
-  .utility-bar .cross-mini { width: 13px; height: 13px; color: var(--accent); flex: none; }
-  .utility-bar .brand-mini span { font-weight: 700; font-size: 13.5px; color: var(--ink); }
-  .utility-bar a {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
+  .topbar .logo { display: flex; align-items: center; gap: 7px; margin-right: 14px; flex: none; }
+  .topbar .logo svg { width: 13px; height: 13px; color: var(--chrome); flex: none; }
+  .topbar .logo b { font-size: 13.5px; font-weight: 700; }
+  .topbar a {
+    font-size: 12.5px; font-weight: 600; color: var(--ink-2);
+    text-decoration: none; padding: 6px 10px; border-radius: 999px; white-space: nowrap;
   }
-  .utility-bar a:hover { background: var(--surface-2); color: var(--ink); }
+  .topbar a:hover { background: var(--surface-2); color: var(--ink); }
 
-  /* ---- cabeçalho ---- */
-  header.hdr { padding: 4px 0 8px; }
-  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-  .brand .cross { width: 22px; height: 22px; color: var(--accent); flex: none; }
-  .brand .mark { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; }
-  header.hdr h1 { font-size: 30px; font-weight: 700; margin: 0 0 6px; line-height: 1.15; text-wrap: balance; }
-  header.hdr .period { margin: 0; font-size: 14px; color: var(--ink-soft); }
+  .page { max-width: 940px; margin: 0 auto; padding: 26px 20px 72px; }
 
-  /* ---- insight sintetizado ---- */
+  /* cabeçalho */
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .brand svg { width: 20px; height: 20px; color: var(--chrome); flex: none; }
+  :root[data-theme="dark"] .brand svg { color: var(--accent); }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .brand svg,
+    :root:where(:not([data-theme="light"])) .topbar .logo svg { color: var(--accent); }
+  }
+  .brand b { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  h1 { font-size: 27px; font-weight: 700; margin: 0 0 5px; line-height: 1.18; text-wrap: balance; }
+  .period { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+
+  /* insight */
   .insight {
-    margin-top: 20px;
-    background: var(--accent-100);
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-    border-radius: var(--radius-lg);
-    padding: 16px 20px;
-    font-size: 15px;
-    line-height: 1.6;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    margin-top: 22px; padding: 17px 20px;
+    background: var(--accent-tint);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: var(--r-lg);
   }
-  .insight .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 7px; flex: none; }
-  .insight strong { font-weight: 700; }
-  .insight .good-txt { color: var(--good); font-weight: 700; }
-  .insight .bad-txt { color: var(--bad); font-weight: 700; }
+  .insight p { margin: 0; font-size: 15px; line-height: 1.6; }
+  .insight .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 
-  /* ---- seções ---- */
-  section { margin-top: 40px; scroll-margin-top: 64px; }
-  .section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin: 0 0 4px;
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
   }
-  .section-title { font-size: 19px; font-weight: 700; margin: 0 0 14px; }
-  .section-sub { font-size: 13px; color: var(--ink-soft); margin: -8px 0 16px; }
+  .chip .ico { font-size: 10px; line-height: 1; }
+  .chip.good { color: var(--good-ink); background: var(--good-tint); border-color: color-mix(in srgb, var(--good-ink) 25%, transparent); }
+  .chip.warn { color: var(--warn-ink); background: var(--warn-tint); border-color: color-mix(in srgb, var(--warn-ink) 30%, transparent); }
+  .chip.bad  { color: var(--bad-ink);  background: var(--bad-tint);  border-color: color-mix(in srgb, var(--bad-ink) 28%, transparent); }
 
-  /* ---- grupos de KPI ---- */
-  .kpi-group { margin-bottom: 22px; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .kpi-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    box-shadow: 0 1px 2px rgba(15, 25, 35, 0.04);
-  }
-  .kpi-card .label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
-  .kpi-card .value { font-weight: 700; font-size: 25px; line-height: 1.1; font-variant-numeric: tabular-nums; margin-bottom: 8px; }
-  .kpi-card .value .unit { font-size: 13px; font-weight: 400; color: var(--ink-soft); }
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 999px;
-  }
-  .pill.good { background: var(--good-100); color: var(--good); }
-  .pill.warning { background: var(--warning-100); color: var(--warning); }
-  .pill.bad { background: var(--bad-100); color: var(--bad); }
+  /* seções */
+  section { margin-top: 42px; scroll-margin-top: 62px; }
+  .eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted); margin: 0 0 5px; }
+  h2 { font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .sub { font-size: 13px; color: var(--ink-2); margin: 0 0 16px; }
 
-  /* ---- tabela comparativa ---- */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 20px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 20px;
   }
-  table.compare { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-  table.compare th, table.compare td { padding: 11px 10px; text-align: right; border-bottom: 1px solid var(--line); font-size: 13.5px; }
-  table.compare th:first-child, table.compare td:first-child { text-align: left; }
-  table.compare thead th { font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; border-bottom: 2px solid var(--line); }
-  table.compare tbody tr:last-child td { border-bottom: none; }
-  table.compare td.name { font-weight: 600; }
-  table.compare td.muted { color: var(--ink-soft); }
-  table.compare tr.flag td.name::before { content: "⚠ "; color: var(--warning); }
+  .card h3 { font-size: 15px; font-weight: 700; margin: 0 0 3px; }
 
-  /* ---- tendência ---- */
-  .trend-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; max-width: 480px; }
-  .trend-row { display: grid; grid-template-columns: 72px 1fr 92px; align-items: center; gap: 10px; font-size: 13px; }
-  .trend-row .lbl { color: var(--ink-soft); }
-  .trend-track { height: 10px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-  .trend-fill { height: 100%; border-radius: 999px; background: var(--accent); }
-  .trend-fill.dim { background: var(--ink-faint); opacity: 0.5; }
-  .trend-val { text-align: right; font-weight: 600; }
-
-  /* ---- detalhamento / breakdown ---- */
-  .breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-  .bd-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 16px; }
-  .bd-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .bd-head h3 { font-size: 13px; font-weight: 700; color: var(--accent); margin: 0; letter-spacing: 0.01em; }
-  .bd-sort-btn {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 4px 9px;
-    cursor: pointer;
+  /* hero + tiles */
+  .hero-row { display: grid; grid-template-columns: 1.15fr 2fr; gap: 14px; align-items: stretch; }
+  .hero {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-lg); padding: 20px;
+    display: flex; flex-direction: column; justify-content: center;
   }
-  .bd-sort-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
-  table.bd { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.bd th { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; text-align: right; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-  table.bd th:first-child { text-align: left; }
-  table.bd td { padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); vertical-align: middle; }
-  table.bd tbody tr:last-child td { border-bottom: none; }
-  table.bd td.name-cell { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-  table.bd td.name-cell .nm { font-size: 13px; }
-  table.bd .bar-track { height: 4px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-  table.bd .bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
-  table.bd td.num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  table.bd td.pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-soft); white-space: nowrap; }
-  table.bd td.pct.neg { color: var(--bad); }
-  table.bd tr.other td { font-style: italic; color: var(--ink-faint); }
+  .hero .lbl { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+  .hero .fig { font-size: 50px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .hero .fig span { font-size: 21px; font-weight: 400; color: var(--ink-2); }
+  .hero .ctx { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; line-height: 1.5; }
 
-  /* ---- legenda / rodapé ---- */
-  .legend {
-    margin-top: 40px;
-    padding: 14px 16px;
-    background: var(--surface-2);
-    border-radius: var(--radius-md);
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    line-height: 1.7;
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r-md); padding: 16px;
+    display: flex; flex-direction: column; gap: 9px;
   }
-  .legend b { color: var(--ink); }
-  footer.ftr { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-faint); line-height: 1.6; }
+  .tile .lbl { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+  .tile .val { font-size: 26px; font-weight: 700; line-height: 1; }
+  .tile .val span { font-size: 13px; font-weight: 400; color: var(--ink-2); }
 
-  @media (max-width: 640px) {
-    .kpi-grid, .breakdown-grid { grid-template-columns: 1fr; }
+  /* gráfico */
+  .chart-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0 2px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
+  .key { width: 15px; height: 2px; border-radius: 2px; flex: none; }
+  .key.realizado { background: var(--accent); }
+  .key.meta { background: var(--ink-muted); }
+  .key.proj { background: transparent; border-top: 2px dashed var(--accent); height: 0; }
+
+  .plot-wrap { position: relative; margin-top: 6px; }
+  .plot { display: block; width: 100%; height: auto; overflow: visible; }
+  .grid-line { stroke: var(--line-soft); stroke-width: 1; }
+  .axis-line { stroke: var(--line); stroke-width: 1; }
+  .tick { font-size: 10.5px; fill: var(--ink-muted); font-family: var(--font); font-variant-numeric: tabular-nums; }
+  .xlab { font-size: 11px; fill: var(--ink-2); font-family: var(--font); }
+  .ln-realizado { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .ln-proj { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5 4; stroke-linecap: round; }
+  .ln-meta { fill: none; stroke: var(--ink-muted); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+  .dot-open { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+  .dlabel { font-size: 11.5px; font-weight: 600; fill: var(--ink); font-family: var(--font); }
+  .dlabel-sub { font-size: 10.5px; fill: var(--ink-2); font-family: var(--font); }
+  .crosshair { stroke: var(--ink-muted); stroke-width: 1; opacity: 0; pointer-events: none; }
+  .hitband { fill: transparent; cursor: crosshair; }
+
+  .tip {
+    position: absolute; z-index: 4; pointer-events: none;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 8px; padding: 9px 11px; min-width: 148px;
+    box-shadow: 0 4px 14px rgba(10, 20, 30, 0.13);
+    font-size: 12.5px; opacity: 0; transition: opacity 0.1s;
+  }
+  @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+  .tip.on { opacity: 1; }
+  .tip .tip-m { font-weight: 700; margin-bottom: 6px; font-size: 13px; }
+  .tip .tip-r { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 3px; }
+  .tip .tip-r i { display: inline-flex; align-items: center; gap: 6px; font-style: normal; color: var(--ink-2); }
+  .tip .tip-r b { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  .toggle {
+    font-size: 11.5px; font-weight: 600; color: var(--ink-2);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 999px; padding: 5px 11px; cursor: pointer; font-family: var(--font);
+  }
+  .toggle:hover { color: var(--ink); border-color: var(--ink-muted); }
+  .toggle[aria-pressed="true"] { background: var(--accent-tint); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+
+  .tbl-wrap { overflow-x: auto; margin-top: 14px; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 10px 9px; text-align: right; border-bottom: 1px solid var(--line-soft); font-size: 13px; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-muted); font-weight: 700; border-bottom: 1px solid var(--line); }
+  tbody tr:last-child td { border-bottom: none; }
+  td.nm { font-weight: 600; }
+  td.dim { color: var(--ink-2); }
+  tr.alert td.nm::before { content: "⚠"; color: var(--warn-ink); margin-right: 6px; font-size: 12px; }
+  [hidden] { display: none !important; }
+
+  /* meter */
+  .meter { margin-top: 16px; }
+  .meter-track {
+    position: relative; height: 26px; border-radius: 6px;
+    background: var(--accent-soft); display: flex; overflow: hidden;
+  }
+  .meter-real { background: var(--accent); height: 100%; }
+  .meter-gap { width: 2px; background: var(--surface); height: 100%; flex: none; }
+  .meter-proj { background: color-mix(in srgb, var(--accent) 42%, var(--surface)); height: 100%; }
+  .meter-scale { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--ink-2); }
+  .meter-legend { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 13px; }
+  .meter-legend span { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--ink-2); }
+  .sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+  .sw.a { background: var(--accent); }
+  .sw.b { background: color-mix(in srgb, var(--accent) 42%, var(--surface)); }
+  .sw.c { background: var(--accent-soft); }
+
+  /* breakdown */
+  .bd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .bd { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 16px; }
+  .bd-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+  .bd-top h3 { font-size: 12.5px; font-weight: 700; color: var(--chrome); margin: 0; letter-spacing: 0.02em; text-transform: uppercase; }
+  :root[data-theme="dark"] .bd-top h3 { color: var(--accent); }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .bd-top h3 { color: var(--accent); }
+  }
+  .bd table td { padding: 9px 0; }
+  .bd table th { padding: 0 0 6px; }
+  .bd .cell { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .bd .rank-track { height: 4px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .bd .rank-fill { height: 100%; border-radius: 999px; background: var(--accent); display: block; }
+  .bd .rank-fill.neg { background: var(--bad-ink); }
+  .bd td.n { font-weight: 600; white-space: nowrap; }
+  .bd td.p { color: var(--ink-2); white-space: nowrap; }
+  .bd td.p.neg { color: var(--bad-ink); font-weight: 600; }
+  .bd tr.rest td { font-style: italic; color: var(--ink-muted); font-weight: 400; }
+
+  .howto {
+    margin-top: 44px; padding: 16px 18px;
+    background: var(--surface-2); border-radius: var(--r-md);
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.75;
+  }
+  .howto b { color: var(--ink); }
+  footer { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-muted); line-height: 1.6; }
+
+  @media (max-width: 760px) {
+    .hero-row { grid-template-columns: 1fr; }
+    .tiles { grid-template-columns: 1fr; }
+    .bd-grid { grid-template-columns: 1fr; }
+    .hero .fig { font-size: 42px; }
   }
 </style>
 
-<div class="disclaimer">
-  <strong>Exemplo ilustrativo</strong>, empresa, valores e nomes fictícios. Esta é uma visão web complementar ao e-mail diário (que continua simples, em HTML de tabelas, compatível com Outlook), pensada para quando alguém clica "ver mais" a partir do e-mail e quer explorar com mais profundidade.
-</div>
+<p class="note">
+  Exemplo ilustrativo com empresa, valores e nomes fictícios. Esta é a visão web complementar ao e-mail diário: o e-mail segue simples (HTML de tabelas, compatível com Outlook Desktop) e leva para cá quem quer explorar os números com mais profundidade.
+</p>
 
-<div class="utility-bar">
-  <nav>
-    <div class="brand-mini">
-      <svg class="cross-mini" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
-        <rect x="10" y="0" width="8" height="8" /><rect x="0" y="10" width="8" height="8" />
-        <rect x="20" y="10" width="8" height="8" /><rect x="10" y="20" width="8" height="8" />
-      </svg>
-      <span>Acme</span>
-    </div>
-    <a href="#resumo">Resumo</a>
+<div class="topbar">
+  <nav aria-label="Navegação do painel">
+    <span class="logo">
+      <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true"><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="20" y="10" width="8" height="8"/><rect x="10" y="20" width="8" height="8"/></svg>
+      <b>Acme</b>
+    </span>
+    <a href="#destaque">Destaque</a>
+    <a href="#evolucao">Evolução</a>
+    <a href="#projecao">Projeção</a>
     <a href="#indicadores">Indicadores</a>
-    <a href="#tendencia">Tendência</a>
     <a href="#detalhamento">Detalhamento</a>
   </nav>
 </div>
 
 <div class="page">
 
-  <header class="hdr" id="resumo">
+  <header id="destaque">
     <p class="brand">
-      <svg class="cross" viewBox="0 0 28 28" fill="currentColor" aria-hidden="true">
-        <rect x="10" y="0" width="8" height="8" /><rect x="0" y="10" width="8" height="8" />
-        <rect x="20" y="10" width="8" height="8" /><rect x="10" y="20" width="8" height="8" />
-      </svg>
-      <span class="mark">Acme</span>
+      <svg viewBox="0 0 28 28" fill="currentColor" aria-hidden="true"><rect x="10" y="0" width="8" height="8"/><rect x="0" y="10" width="8" height="8"/><rect x="20" y="10" width="8" height="8"/><rect x="10" y="20" width="8" height="8"/></svg>
+      <b>Acme</b>
     </p>
-    <h1>Resumo Gerencial Diário — Julho/2026</h1>
-    <p class="period">Acumulado até 23/07 (D-1), comparado ao mesmo período de Junho/2026 · Base: Realizado</p>
+    <h1>Resumo Gerencial Diário</h1>
+    <p class="period">Julho/2026, acumulado até 23/07 (D-1), comparado ao mesmo período de Junho/2026 · Base: Realizado</p>
 
     <div class="insight">
-      <span class="dot"></span>
-      <span>Receita cresceu <span class="good-txt">8,7%</span> sobre o mês anterior e já supera <strong>94,6%</strong> da meta do mês, mas a margem bruta caiu <span class="bad-txt">1,3 p.p.</span>, puxada por um aumento de 0,9 p.p. na carga de impostos e 5,5% no CMV. Vale olhar de perto a região <strong>Nordeste</strong>, com margem negativa no detalhamento abaixo.</span>
+      <p>A receita cresce bem, mas a rentabilidade piorou: o CMV subiu 10,6% e os impostos ganharam 0,9 ponto percentual, os dois acima do avanço de 8,7% da receita. O resultado é um lucro quase estável e uma margem menor. O ponto de atenção está concentrado na Gerência Nordeste, com margem negativa.</p>
+      <div class="chips">
+        <span class="chip good"><span class="ico" aria-hidden="true">▲</span>Receita +8,7%</span>
+        <span class="chip bad"><span class="ico" aria-hidden="true">▼</span>Margem -1,8 p.p.</span>
+        <span class="chip warn"><span class="ico" aria-hidden="true">⚠</span>Projeção 2,1% abaixo da meta</span>
+        <span class="chip warn"><span class="ico" aria-hidden="true">⚠</span>Nordeste com margem -3,4%</span>
+      </div>
     </div>
   </header>
 
-  <section id="indicadores">
-    <div class="kpi-group">
-      <p class="section-label">Resultado do mês</p>
-      <h2 class="section-title" style="margin-bottom:10px;">Receita e rentabilidade</h2>
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="label">Receita Bruta</div>
-          <div class="value">R$ 18,44<span class="unit"> mi</span></div>
-          <span class="pill good">▲ 8,7% vs mês anterior</span>
-        </div>
-        <div class="kpi-card">
-          <div class="label">Lucro Bruto</div>
-          <div class="value">R$ 5,24<span class="unit"> mi</span></div>
-          <span class="pill good">▲ 11,9% vs mês anterior</span>
-        </div>
-        <div class="kpi-card">
-          <div class="label">Margem Bruta</div>
-          <div class="value">33,2<span class="unit">%</span></div>
-          <span class="pill bad">▼ 1,3 p.p. vs mês anterior</span>
-        </div>
+  <section aria-labelledby="h-num">
+    <p class="eyebrow">O número do dia</p>
+    <h2 id="h-num" class="sr-only">Receita bruta do mês</h2>
+    <div class="hero-row">
+      <div class="hero">
+        <div class="lbl">Receita bruta acumulada</div>
+        <div class="fig">R$ 18,44<span> mi</span></div>
+        <span class="chip good" style="align-self:flex-start;"><span class="ico" aria-hidden="true">▲</span>8,7% vs mesmo período de Junho</span>
+        <p class="ctx">75,3% da meta de R$ 24,50 mi cumpridos com 23 de 31 dias corridos.</p>
       </div>
-    </div>
-
-    <div class="kpi-group">
-      <p class="section-label">Meta do mês</p>
-      <h2 class="section-title" style="margin-bottom:10px;">Atingimento</h2>
-      <div class="kpi-grid" style="grid-template-columns: 1fr 1fr;">
-        <div class="kpi-card">
-          <div class="label">Atingimento de Meta</div>
-          <div class="value">94,6<span class="unit">%</span></div>
-          <span class="pill good">▲ 6,4 p.p. vs mês anterior</span>
+      <div class="tiles">
+        <div class="tile">
+          <div class="lbl">Lucro bruto</div>
+          <div class="val">R$ 5,24<span> mi</span></div>
+          <span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span>
         </div>
-        <div class="kpi-card">
-          <div class="label">Projeção de fechamento</div>
-          <div class="value">R$ 23,98<span class="unit"> mi</span></div>
-          <span class="pill warning">▼ 2,1% abaixo da meta orçada</span>
+        <div class="tile">
+          <div class="lbl">Margem bruta</div>
+          <div class="val">33,2<span>%</span></div>
+          <span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span>
         </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 2px; font-size:15.5px;">Comparativo completo</h3>
-      <p class="section-sub" style="margin-top:2px;">Acumulado no mês · base Realizado</p>
-      <div style="overflow-x:auto;">
-      <table class="compare">
-        <thead>
-          <tr><th>Indicador</th><th>Jul/2026 (até 23)</th><th>Jun/2026 (até 23)</th><th>Variação</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="name">Receita Bruta</td><td>R$ 18.436.200</td><td class="muted">R$ 16.958.400</td><td><span class="pill good">▲ 8,7%</span></td></tr>
-          <tr class="flag"><td class="name">Impostos (% Receita)</td><td>14,2%</td><td class="muted">13,3%</td><td><span class="pill bad">▲ 0,9 p.p.</span></td></tr>
-          <tr><td class="name">Receita Líquida</td><td>R$ 15.812.900</td><td class="muted">R$ 14.703.100</td><td><span class="pill good">▲ 7,5%</span></td></tr>
-          <tr class="flag"><td class="name">CMV</td><td>R$ 10.568.800</td><td class="muted">R$ 10.015.800</td><td><span class="pill bad">▲ 5,5%</span></td></tr>
-          <tr><td class="name">Lucro Bruto</td><td>R$ 5.244.100</td><td class="muted">R$ 4.687.300</td><td><span class="pill good">▲ 11,9%</span></td></tr>
-          <tr><td class="name">Margem Bruta</td><td>33,2%</td><td class="muted">31,9%</td><td><span class="pill bad">▼ 1,3 p.p.</span></td></tr>
-          <tr><td class="name">Atingimento de Meta</td><td>94,6%</td><td class="muted">88,2%</td><td><span class="pill good">▲ 6,4 p.p.</span></td></tr>
-        </tbody>
-      </table>
+        <div class="tile">
+          <div class="lbl">Atingimento de meta</div>
+          <div class="val">75,3<span>%</span></div>
+          <span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="tendencia">
-    <p class="section-label">Projeção</p>
-    <h2 class="section-title">Tendência de fechamento do mês</h2>
-    <div class="card">
-      <p style="margin:0; font-size:14.5px; line-height:1.6;">No ritmo atual de faturamento por dia útil, a projeção de fechamento de Julho/2026 é de <strong>R$ 23,98 mi</strong>, <span class="pill warning" style="margin:0 2px;">▼ 2,1%</span> abaixo da meta orçada de R$ 24,50 mi.</p>
-      <div class="trend-bars">
-        <div class="trend-row"><span class="lbl">Projeção</span><span class="trend-track"><span class="trend-fill" style="width:97.9%;"></span></span><span class="trend-val">R$ 23,98 mi</span></div>
-        <div class="trend-row"><span class="lbl">Meta</span><span class="trend-track"><span class="trend-fill dim" style="width:100%;"></span></span><span class="trend-val" style="color:var(--ink-soft);">R$ 24,50 mi</span></div>
+  <section id="evolucao">
+    <p class="eyebrow">Evolução</p>
+    <div class="chart-head">
+      <div>
+        <h2>Receita mensal contra a meta</h2>
+        <p class="sub" style="margin-bottom:0;">Fechamento de Janeiro a Junho. Julho aparece como projeção, porque o mês ainda está em curso.</p>
       </div>
+      <button class="toggle" type="button" id="btn-tabela" aria-pressed="false" aria-controls="tabela-evolucao">ver como tabela</button>
+    </div>
+
+    <div class="card" style="padding-top:16px;">
+      <div class="legend">
+        <span><i class="key realizado" aria-hidden="true"></i>Realizado</span>
+        <span><i class="key proj" aria-hidden="true"></i>Projeção de fechamento</span>
+        <span><i class="key meta" aria-hidden="true"></i>Meta</span>
+      </div>
+
+      <div class="plot-wrap" id="plot-wrap">
+        <svg class="plot" viewBox="0 0 700 212" role="img"
+             aria-label="Gráfico de linha da receita mensal realizada contra a meta, de Janeiro a Julho de 2026. A receita realizada supera a meta de Maio e Junho, e a projeção de Julho fica pouco abaixo da meta. Os valores exatos estão na tabela equivalente, disponível pelo botão ver como tabela.">
+          <line class="grid-line" x1="50" y1="134.29" x2="590" y2="134.29"/>
+          <line class="grid-line" x1="50" y1="88.57" x2="590" y2="88.57"/>
+          <line class="grid-line" x1="50" y1="42.86" x2="590" y2="42.86"/>
+          <line class="axis-line" x1="50" y1="180" x2="590" y2="180"/>
+
+          <text class="tick" x="42" y="184" text-anchor="end">0</text>
+          <text class="tick" x="42" y="138.29" text-anchor="end">10</text>
+          <text class="tick" x="42" y="92.57" text-anchor="end">20</text>
+          <text class="tick" x="42" y="46.86" text-anchor="end">30</text>
+          <text class="tick" x="42" y="26" text-anchor="end">R$ mi</text>
+
+          <path class="ln-meta" d="M50,75.77 L140,83.55 L230,70.29 L320,47.89 L410,47.89 L500,54.29 L590,68.00"/>
+          <path class="ln-realizado" d="M50,75.77 L140,83.55 L230,71.66 L320,50.17 L410,33.26 L500,38.29"/>
+          <path class="ln-proj" d="M500,38.29 L590,70.38"/>
+
+          <circle class="dot" cx="500" cy="38.29" r="4.5"/>
+          <circle class="dot-open" cx="590" cy="70.38" r="4.5"/>
+
+          <text class="dlabel" x="601" y="68" text-anchor="start">R$ 23,98 mi</text>
+          <text class="dlabel-sub" x="601" y="82" text-anchor="start">projeção</text>
+
+          <text class="xlab" x="50" y="200" text-anchor="middle">Jan</text>
+          <text class="xlab" x="140" y="200" text-anchor="middle">Fev</text>
+          <text class="xlab" x="230" y="200" text-anchor="middle">Mar</text>
+          <text class="xlab" x="320" y="200" text-anchor="middle">Abr</text>
+          <text class="xlab" x="410" y="200" text-anchor="middle">Mai</text>
+          <text class="xlab" x="500" y="200" text-anchor="middle">Jun</text>
+          <text class="xlab" x="590" y="200" text-anchor="middle">Jul</text>
+
+          <line class="crosshair" id="cross" x1="0" y1="20" x2="0" y2="180"/>
+          <g id="bands"></g>
+        </svg>
+        <div class="tip" id="tip" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="card tbl-wrap" id="tabela-evolucao" hidden>
+      <h3>Receita mensal, realizado contra meta</h3>
+      <table>
+        <caption class="sr-only">Receita realizada, meta e realizado do ano anterior, por mês, em milhões de reais</caption>
+        <thead><tr><th scope="col">Mês</th><th scope="col">Realizado</th><th scope="col">Meta</th><th scope="col">Ano anterior</th><th scope="col">Realizado vs meta</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Jan/2026</td><td>R$ 22,80 mi</td><td class="dim">R$ 22,80 mi</td><td class="dim">R$ 19,20 mi</td><td>0,0%</td></tr>
+          <tr><td class="nm">Fev/2026</td><td>R$ 21,10 mi</td><td class="dim">R$ 21,10 mi</td><td class="dim">R$ 17,60 mi</td><td>0,0%</td></tr>
+          <tr><td class="nm">Mar/2026</td><td>R$ 23,70 mi</td><td class="dim">R$ 24,00 mi</td><td class="dim">R$ 15,70 mi</td><td>-1,3%</td></tr>
+          <tr><td class="nm">Abr/2026</td><td>R$ 28,40 mi</td><td class="dim">R$ 28,90 mi</td><td class="dim">R$ 24,00 mi</td><td>-1,7%</td></tr>
+          <tr><td class="nm">Mai/2026</td><td>R$ 32,10 mi</td><td class="dim">R$ 28,90 mi</td><td class="dim">R$ 21,40 mi</td><td>+11,1%</td></tr>
+          <tr><td class="nm">Jun/2026</td><td>R$ 31,00 mi</td><td class="dim">R$ 27,50 mi</td><td class="dim">R$ 18,50 mi</td><td>+12,7%</td></tr>
+          <tr class="alert"><td class="nm">Jul/2026 (projeção)</td><td>R$ 23,98 mi</td><td class="dim">R$ 24,50 mi</td><td class="dim">R$ 22,10 mi</td><td>-2,1%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="projecao">
+    <p class="eyebrow">Projeção</p>
+    <h2>Onde o mês deve fechar</h2>
+    <p class="sub">Ritmo atual de faturamento por dia útil, projetado até o fim do mês.</p>
+    <div class="card">
+      <p style="margin:0; font-size:14.5px; line-height:1.6;">Mantido o ritmo atual, Julho fecha em R$ 23,98 mi, o que fica <span class="chip warn" style="vertical-align:middle;"><span class="ico" aria-hidden="true">⚠</span>2,1% abaixo</span> da meta de R$ 24,50 mi. Faltam R$ 0,52 mi para virar o resultado.</p>
+
+      <div class="meter">
+        <div class="meter-track" role="img" aria-label="Medidor: R$ 18,44 milhões já realizados, equivalentes a 75,3% da meta. Somados à projeção do restante do mês, chega a R$ 23,98 milhões, equivalentes a 97,9% da meta de R$ 24,50 milhões.">
+          <span class="meter-real" style="width:75.3%;"></span>
+          <span class="meter-gap"></span>
+          <span class="meter-proj" style="width:22.6%;"></span>
+        </div>
+        <div class="meter-scale"><span>R$ 0</span><span>Meta: R$ 24,50 mi</span></div>
+        <div class="meter-legend">
+          <span><i class="sw a" aria-hidden="true"></i>Realizado até 23/07: R$ 18,44 mi</span>
+          <span><i class="sw b" aria-hidden="true"></i>Projetado no restante: R$ 5,54 mi</span>
+          <span><i class="sw c" aria-hidden="true"></i>Falta para a meta: R$ 0,52 mi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="indicadores">
+    <p class="eyebrow">Detalhe financeiro</p>
+    <h2>Comparativo completo</h2>
+    <p class="sub">Acumulado no mês contra o mesmo período do mês anterior. Base: Realizado.</p>
+    <div class="card tbl-wrap">
+      <table>
+        <thead><tr><th scope="col">Indicador</th><th scope="col">Jul/2026 (até 23)</th><th scope="col">Jun/2026 (até 23)</th><th scope="col">Variação</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Receita bruta</td><td>R$ 18.436.200</td><td class="dim">R$ 16.958.400</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>8,7%</span></td></tr>
+          <tr class="alert"><td class="nm">Impostos (% da receita)</td><td>14,2%</td><td class="dim">13,3%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>0,9 p.p.</span></td></tr>
+          <tr><td class="nm">Receita líquida</td><td>R$ 15.812.900</td><td class="dim">R$ 14.703.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>7,5%</span></td></tr>
+          <tr class="alert"><td class="nm">CMV</td><td>R$ 10.568.800</td><td class="dim">R$ 9.557.000</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▲</span>10,6%</span></td></tr>
+          <tr><td class="nm">Lucro bruto</td><td>R$ 5.244.100</td><td class="dim">R$ 5.146.100</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>1,9%</span></td></tr>
+          <tr class="alert"><td class="nm">Margem bruta</td><td>33,2%</td><td class="dim">35,0%</td><td><span class="chip bad"><span class="ico" aria-hidden="true">▼</span>1,8 p.p.</span></td></tr>
+          <tr><td class="nm">Atingimento de meta</td><td>75,3%</td><td class="dim">61,7%</td><td><span class="chip good"><span class="ico" aria-hidden="true">▲</span>13,6 p.p.</span></td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
   <section id="detalhamento">
-    <p class="section-label">Onde olhar</p>
-    <h2 class="section-title">Detalhamento por dimensão</h2>
-    <p class="section-sub">Receita Bruta e Margem Bruta · top 5 de cada, clique em "ordenar por margem" para reordenar</p>
+    <p class="eyebrow">Onde olhar</p>
+    <h2>Detalhamento por dimensão</h2>
+    <p class="sub">Receita bruta e margem bruta, top 5 de cada dimensão. A barra acompanha a métrica pela qual a tabela está ordenada.</p>
+    <p class="sr-only" role="status" aria-live="polite" id="sort-status"></p>
 
-    <div class="breakdown-grid" id="breakdown-root">
-      <div class="bd-card" data-title="Por Gerente">
-        <div class="bd-head"><h3>Por Gerente</h3><button class="bd-sort-btn" data-sort="receita">ordenar por margem</button></div>
-        <table class="bd"><thead><tr><th>Nome</th><th>Receita</th><th>Margem</th></tr></thead>
-        <tbody>
-          <tr data-receita="6.12" data-margem="34.8"><td class="name-cell"><span class="nm">Gerência Sudeste</span><span class="bar-track"><span class="bar-fill" style="width:100%;"></span></span></td><td class="num">R$ 6,12 mi</td><td class="pct">34,8%</td></tr>
-          <tr data-receita="4.47" data-margem="-3.4"><td class="name-cell"><span class="nm">Gerência Nordeste</span><span class="bar-track"><span class="bar-fill" style="width:73%;"></span></span></td><td class="num">R$ 4,47 mi</td><td class="pct neg">-3,4%</td></tr>
-          <tr data-receita="3.08" data-margem="35.6"><td class="name-cell"><span class="nm">Gerência Sul</span><span class="bar-track"><span class="bar-fill" style="width:50%;"></span></span></td><td class="num">R$ 3,08 mi</td><td class="pct">35,6%</td></tr>
-          <tr data-receita="2.61" data-margem="29.7"><td class="name-cell"><span class="nm">Gerência Centro-Oeste</span><span class="bar-track"><span class="bar-fill" style="width:43%;"></span></span></td><td class="num">R$ 2,61 mi</td><td class="pct">29,7%</td></tr>
-          <tr data-receita="1.44" data-margem="27.9"><td class="name-cell"><span class="nm">Gerência Norte</span><span class="bar-track"><span class="bar-fill" style="width:24%;"></span></span></td><td class="num">R$ 1,44 mi</td><td class="pct">27,9%</td></tr>
-          <tr class="other"><td class="name-cell"><span class="nm">Outros (7)</span></td><td class="num">R$ 0,68 mi</td><td class="pct">30,1%</td></tr>
-        </tbody></table>
+    <div class="bd-grid" id="bd-root">
+      <div class="bd" data-dim="Gerente">
+        <div class="bd-top">
+          <h3>Por gerente</h3>
+          <button class="toggle bd-sort" type="button" data-by="receita" aria-pressed="false">ordenar por margem</button>
+        </div>
+        <table>
+          <thead><tr><th scope="col">Gerente</th><th scope="col">Receita</th><th scope="col">Margem</th></tr></thead>
+          <tbody>
+            <tr data-receita="6.12" data-margem="34.8"><td><span class="cell"><span>Gerência Sudeste</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 6,12 mi</td><td class="p">34,8%</td></tr>
+            <tr data-receita="4.47" data-margem="-3.4"><td><span class="cell"><span>Gerência Nordeste</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 4,47 mi</td><td class="p neg">-3,4%</td></tr>
+            <tr data-receita="3.08" data-margem="35.6"><td><span class="cell"><span>Gerência Sul</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 3,08 mi</td><td class="p">35,6%</td></tr>
+            <tr data-receita="2.61" data-margem="29.7"><td><span class="cell"><span>Gerência Centro-Oeste</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,61 mi</td><td class="p">29,7%</td></tr>
+            <tr data-receita="1.44" data-margem="27.9"><td><span class="cell"><span>Gerência Norte</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,44 mi</td><td class="p">27,9%</td></tr>
+            <tr class="rest"><td>Outros (7)</td><td class="n">R$ 0,68 mi</td><td class="p">30,1%</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="bd-card" data-title="Por UF">
-        <div class="bd-head"><h3>Por UF</h3><button class="bd-sort-btn" data-sort="receita">ordenar por margem</button></div>
-        <table class="bd"><thead><tr><th>UF</th><th>Receita</th><th>Margem</th></tr></thead>
-        <tbody>
-          <tr data-receita="5.64" data-margem="33.9"><td class="name-cell"><span class="nm">SP</span><span class="bar-track"><span class="bar-fill" style="width:100%;"></span></span></td><td class="num">R$ 5,64 mi</td><td class="pct">33,9%</td></tr>
-          <tr data-receita="3.92" data-margem="32.4"><td class="name-cell"><span class="nm">RJ</span><span class="bar-track"><span class="bar-fill" style="width:70%;"></span></span></td><td class="num">R$ 3,92 mi</td><td class="pct">32,4%</td></tr>
-          <tr data-receita="2.77" data-margem="30.8"><td class="name-cell"><span class="nm">BA</span><span class="bar-track"><span class="bar-fill" style="width:49%;"></span></span></td><td class="num">R$ 2,77 mi</td><td class="pct">30,8%</td></tr>
-          <tr data-receita="2.15" data-margem="34.1"><td class="name-cell"><span class="nm">PE</span><span class="bar-track"><span class="bar-fill" style="width:38%;"></span></span></td><td class="num">R$ 2,15 mi</td><td class="pct">34,1%</td></tr>
-          <tr data-receita="1.68" data-margem="28.6"><td class="name-cell"><span class="nm">MG</span><span class="bar-track"><span class="bar-fill" style="width:30%;"></span></span></td><td class="num">R$ 1,68 mi</td><td class="pct">28,6%</td></tr>
-          <tr class="other"><td class="name-cell"><span class="nm">Outros</span></td><td class="num">R$ 2,24 mi</td><td class="pct">31,5%</td></tr>
-        </tbody></table>
+      <div class="bd" data-dim="UF">
+        <div class="bd-top">
+          <h3>Por UF</h3>
+          <button class="toggle bd-sort" type="button" data-by="receita" aria-pressed="false">ordenar por margem</button>
+        </div>
+        <table>
+          <thead><tr><th scope="col">UF</th><th scope="col">Receita</th><th scope="col">Margem</th></tr></thead>
+          <tbody>
+            <tr data-receita="5.64" data-margem="33.9"><td><span class="cell"><span>SP</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 5,64 mi</td><td class="p">33,9%</td></tr>
+            <tr data-receita="3.92" data-margem="32.4"><td><span class="cell"><span>RJ</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 3,92 mi</td><td class="p">32,4%</td></tr>
+            <tr data-receita="2.77" data-margem="30.8"><td><span class="cell"><span>BA</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,77 mi</td><td class="p">30,8%</td></tr>
+            <tr data-receita="2.15" data-margem="34.1"><td><span class="cell"><span>PE</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,15 mi</td><td class="p">34,1%</td></tr>
+            <tr data-receita="1.68" data-margem="28.6"><td><span class="cell"><span>MG</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,68 mi</td><td class="p">28,6%</td></tr>
+            <tr class="rest"><td>Outros (9)</td><td class="n">R$ 1,73 mi</td><td class="p">31,5%</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="bd-card" data-title="Por Unidade">
-        <div class="bd-head"><h3>Por Unidade</h3><button class="bd-sort-btn" data-sort="receita">ordenar por margem</button></div>
-        <table class="bd"><thead><tr><th>Unidade</th><th>Receita</th><th>Margem</th></tr></thead>
-        <tbody>
-          <tr data-receita="2.84" data-margem="35.2"><td class="name-cell"><span class="nm">Unidade Centro</span><span class="bar-track"><span class="bar-fill" style="width:100%;"></span></span></td><td class="num">R$ 2,84 mi</td><td class="pct">35,2%</td></tr>
-          <tr data-receita="2.31" data-margem="32.0"><td class="name-cell"><span class="nm">Unidade Norte</span><span class="bar-track"><span class="bar-fill" style="width:81%;"></span></span></td><td class="num">R$ 2,31 mi</td><td class="pct">32,0%</td></tr>
-          <tr data-receita="1.96" data-margem="29.4"><td class="name-cell"><span class="nm">Unidade Zona Sul</span><span class="bar-track"><span class="bar-fill" style="width:69%;"></span></span></td><td class="num">R$ 1,96 mi</td><td class="pct">29,4%</td></tr>
-          <tr data-receita="1.52" data-margem="33.7"><td class="name-cell"><span class="nm">Unidade Leste</span><span class="bar-track"><span class="bar-fill" style="width:54%;"></span></span></td><td class="num">R$ 1,52 mi</td><td class="pct">33,7%</td></tr>
-          <tr data-receita="1.21" data-margem="31.1"><td class="name-cell"><span class="nm">Unidade Oeste</span><span class="bar-track"><span class="bar-fill" style="width:43%;"></span></span></td><td class="num">R$ 1,21 mi</td><td class="pct">31,1%</td></tr>
-          <tr class="other"><td class="name-cell"><span class="nm">Outros (56 unidades)</span></td><td class="num">R$ 8,56 mi</td><td class="pct">33,3%</td></tr>
-        </tbody></table>
+      <div class="bd" data-dim="Unidade">
+        <div class="bd-top">
+          <h3>Por unidade</h3>
+          <button class="toggle bd-sort" type="button" data-by="receita" aria-pressed="false">ordenar por margem</button>
+        </div>
+        <table>
+          <thead><tr><th scope="col">Unidade</th><th scope="col">Receita</th><th scope="col">Margem</th></tr></thead>
+          <tbody>
+            <tr data-receita="2.84" data-margem="35.2"><td><span class="cell"><span>Unidade Centro</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,84 mi</td><td class="p">35,2%</td></tr>
+            <tr data-receita="2.31" data-margem="32.0"><td><span class="cell"><span>Unidade Norte</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,31 mi</td><td class="p">32,0%</td></tr>
+            <tr data-receita="1.96" data-margem="29.4"><td><span class="cell"><span>Unidade Zona Sul</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,96 mi</td><td class="p">29,4%</td></tr>
+            <tr data-receita="1.52" data-margem="33.7"><td><span class="cell"><span>Unidade Leste</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,52 mi</td><td class="p">33,7%</td></tr>
+            <tr data-receita="1.21" data-margem="31.1"><td><span class="cell"><span>Unidade Oeste</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,21 mi</td><td class="p">31,1%</td></tr>
+            <tr class="rest"><td>Outros (56)</td><td class="n">R$ 8,56 mi</td><td class="p">33,3%</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="bd-card" data-title="Por Tipo de Faturamento">
-        <div class="bd-head"><h3>Por Tipo de Faturamento</h3><button class="bd-sort-btn" data-sort="receita">ordenar por margem</button></div>
-        <table class="bd"><thead><tr><th>Tipo</th><th>Receita</th><th>Margem</th></tr></thead>
-        <tbody>
-          <tr data-receita="13.92" data-margem="34.0"><td class="name-cell"><span class="nm">Fluxo Normal</span><span class="bar-track"><span class="bar-fill" style="width:100%;"></span></span></td><td class="num">R$ 13,92 mi</td><td class="pct">34,0%</td></tr>
-          <tr data-receita="2.88" data-margem="27.5"><td class="name-cell"><span class="nm">Venda Direta</span><span class="bar-track"><span class="bar-fill" style="width:21%;"></span></span></td><td class="num">R$ 2,88 mi</td><td class="pct">27,5%</td></tr>
-          <tr data-receita="1.17" data-margem="36.9"><td class="name-cell"><span class="nm">Baixa de Pendência</span><span class="bar-track"><span class="bar-fill" style="width:8%;"></span></span></td><td class="num">R$ 1,17 mi</td><td class="pct">36,9%</td></tr>
-          <tr data-receita="-0.44" data-margem="0"><td class="name-cell"><span class="nm">Devolução</span><span class="bar-track"><span class="bar-fill" style="width:3%; background:var(--bad);"></span></span></td><td class="num" style="color:var(--bad);">-R$ 0,44 mi</td><td class="pct">—</td></tr>
-          <tr class="other"><td class="name-cell"><span class="nm">Outros</span></td><td class="num">R$ 0,91 mi</td><td class="pct">30,2%</td></tr>
-        </tbody></table>
+      <div class="bd" data-dim="Tipo de faturamento">
+        <div class="bd-top">
+          <h3>Por tipo de faturamento</h3>
+          <button class="toggle bd-sort" type="button" data-by="receita" aria-pressed="false">ordenar por margem</button>
+        </div>
+        <table>
+          <thead><tr><th scope="col">Tipo</th><th scope="col">Receita</th><th scope="col">Margem</th></tr></thead>
+          <tbody>
+            <tr data-receita="13.92" data-margem="34.0"><td><span class="cell"><span>Fluxo normal</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 13,92 mi</td><td class="p">34,0%</td></tr>
+            <tr data-receita="2.88" data-margem="27.5"><td><span class="cell"><span>Venda direta</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 2,88 mi</td><td class="p">27,5%</td></tr>
+            <tr data-receita="1.17" data-margem="36.9"><td><span class="cell"><span>Baixa de pendência</span><span class="rank-track"><span class="rank-fill"></span></span></span></td><td class="n">R$ 1,17 mi</td><td class="p">36,9%</td></tr>
+            <tr data-receita="-0.44" data-margem="0"><td><span class="cell"><span>Devolução</span><span class="rank-track"><span class="rank-fill neg"></span></span></span></td><td class="n" style="color:var(--bad-ink);">-R$ 0,44 mi</td><td class="p">n/d</td></tr>
+            <tr class="rest"><td>Outros</td><td class="n">R$ 0,91 mi</td><td class="p">30,2%</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <div class="legend">
-    <b>Como ler:</b> ▲/▼ mostram direção; a cor reforça se é favorável (verde-azulado) ou desfavorável (vermelho), nunca é a única pista. Para Impostos e CMV, a lógica é invertida: subir é desfavorável, cair é favorável (diferente de Receita, Lucro e Margem, onde subir é favorável). Linhas marcadas com ⚠ tiveram variação desfavorável neste mês.
+  <div class="howto">
+    <b>Como ler este painel.</b> As setas ▲ e ▼ mostram a direção da variação e a cor apenas reforça se ela é favorável ou desfavorável, então a informação nunca depende só de cor. Para impostos e CMV a leitura é invertida: subir é desfavorável e cair é favorável, ao contrário de receita, lucro e margem. O ⚠ marca as linhas com variação desfavorável no período. Todos os valores dos gráficos também estão disponíveis em tabela.
   </div>
 
-  <footer class="ftr">
-    Gerado automaticamente às 08:00, sempre com dados até D-1 (ou até a última sexta-feira, se hoje for segunda-feira). Este painel web é complementar ao e-mail diário enviado por Send-DailyKpiReport.ps1.
+  <footer>
+    Gerado automaticamente às 08:00, sempre com dados até D-1, ou até a última sexta-feira quando o envio cai numa segunda. Painel complementar ao e-mail produzido por Send-DailyKpiReport.ps1.
   </footer>
 
 </div>
 
 <script>
-  document.querySelectorAll('.bd-sort-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var card = btn.closest('.bd-card');
-      var tbody = card.querySelector('tbody');
-      var rows = Array.prototype.slice.call(tbody.querySelectorAll('tr:not(.other)'));
-      var otherRow = tbody.querySelector('tr.other');
-      var sortingByMargin = btn.dataset.sort === 'receita';
-      var key = sortingByMargin ? 'margem' : 'receita';
-      rows.sort(function (a, b) {
-        return parseFloat(b.dataset[key]) - parseFloat(a.dataset[key]);
+(function () {
+  "use strict";
+
+  var meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho"];
+  var xs = [50, 140, 230, 320, 410, 500, 590];
+  var realizado = [22.80, 21.10, 23.70, 28.40, 32.10, 31.00, null];
+  var projecao = [null, null, null, null, null, null, 23.98];
+  var meta = [22.80, 21.10, 24.00, 28.90, 28.90, 27.50, 24.50];
+  var VB_W = 700;
+
+  function mi(v) { return "R$ " + v.toFixed(2).replace(".", ",") + " mi"; }
+
+  // ---- camada de hover do gráfico: faixas por mês + crosshair + tooltip ----
+  var bands = document.getElementById("bands");
+  var cross = document.getElementById("cross");
+  var tip = document.getElementById("tip");
+  var wrap = document.getElementById("plot-wrap");
+
+  function showTip(i) {
+    var rv = realizado[i];
+    var pv = projecao[i];
+    var mv = meta[i];
+    var atual = rv !== null ? rv : pv;
+    var rotulo = rv !== null ? "Realizado" : "Projeção";
+    var diff = ((atual - mv) / mv) * 100;
+    var sinal = diff >= 0 ? "+" : "";
+    var cor = diff >= 0 ? "var(--good-ink)" : "var(--bad-ink)";
+
+    var keyAtual = rv !== null ? "realizado" : "proj";
+    tip.innerHTML =
+      '<div class="tip-m">' + meses[i] + ' / 2026</div>' +
+      '<div class="tip-r"><i><span class="key ' + keyAtual + '" style="width:12px;"></span>' + rotulo + '</i><b>' + mi(atual) + '</b></div>' +
+      '<div class="tip-r"><i><span class="key meta" style="width:12px;"></span>Meta</i><b>' + mi(mv) + '</b></div>' +
+      '<div class="tip-r"><i>Contra a meta</i><b style="color:' + cor + '">' + sinal + diff.toFixed(1).replace(".", ",") + '%</b></div>';
+
+    tip.classList.add("on");
+    var pct = (xs[i] / VB_W) * 100;
+    tip.style.left = pct + "%";
+    var w = wrap.clientWidth;
+    var px = (xs[i] / VB_W) * w;
+    var shift = px > w - 110 ? "-100%" : (px < 110 ? "0%" : "-50%");
+    tip.style.transform = "translateX(" + shift + ")";
+    tip.style.top = "6px";
+
+    cross.setAttribute("x1", xs[i]);
+    cross.setAttribute("x2", xs[i]);
+    cross.style.opacity = "0.45";
+  }
+
+  function hideTip() {
+    tip.classList.remove("on");
+    cross.style.opacity = "0";
+  }
+
+  // As faixas de hover sao uma camada puramente visual, para mouse. Leitores de
+  // tela recebem o resumo no aria-label do proprio SVG e os valores exatos na
+  // tabela equivalente, que e o caminho acessivel completo. Marcar as faixas como
+  // aria-hidden evita paradas de tabulacao que nao anunciariam nada, ja que
+  // filhos de um elemento role="img" ficam fora da arvore de acessibilidade.
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  xs.forEach(function (x, i) {
+    var r = document.createElementNS(SVG_NS, "rect");
+    var half = 45;
+    r.setAttribute("class", "hitband");
+    r.setAttribute("x", Math.max(0, x - half));
+    r.setAttribute("y", 20);
+    r.setAttribute("width", half * 2);
+    r.setAttribute("height", 160);
+    r.setAttribute("aria-hidden", "true");
+    r.addEventListener("mouseenter", function () { showTip(i); });
+    bands.appendChild(r);
+  });
+  wrap.addEventListener("mouseleave", hideTip);
+
+  // ---- alternar gráfico / tabela ----
+  var btnTabela = document.getElementById("btn-tabela");
+  var tabela = document.getElementById("tabela-evolucao");
+  btnTabela.addEventListener("click", function () {
+    var aberto = btnTabela.getAttribute("aria-pressed") === "true";
+    btnTabela.setAttribute("aria-pressed", String(!aberto));
+    tabela.hidden = aberto;
+    btnTabela.textContent = aberto ? "ver como tabela" : "esconder tabela";
+  });
+
+  // ---- ordenação do detalhamento, com as barras acompanhando a métrica ativa ----
+  var status = document.getElementById("sort-status");
+
+  function pintarBarras(tbody, metrica) {
+    var linhas = Array.prototype.slice.call(tbody.querySelectorAll("tr[data-receita]"));
+    var valores = linhas.map(function (tr) { return Math.abs(parseFloat(tr.dataset[metrica])); });
+    var maior = Math.max.apply(null, valores) || 1;
+    linhas.forEach(function (tr) {
+      var fill = tr.querySelector(".rank-fill");
+      if (!fill) { return; }
+      var v = Math.abs(parseFloat(tr.dataset[metrica]));
+      fill.style.width = (v / maior) * 100 + "%";
+    });
+  }
+
+  document.querySelectorAll(".bd").forEach(function (card) {
+    var tbody = card.querySelector("tbody");
+    var btn = card.querySelector(".bd-sort");
+    pintarBarras(tbody, "receita");
+
+    btn.addEventListener("click", function () {
+      var porMargem = btn.dataset.by === "receita";
+      var metrica = porMargem ? "margem" : "receita";
+      var linhas = Array.prototype.slice.call(tbody.querySelectorAll("tr[data-receita]"));
+      var resto = tbody.querySelector("tr.rest");
+
+      linhas.sort(function (a, b) {
+        return parseFloat(b.dataset[metrica]) - parseFloat(a.dataset[metrica]);
       });
-      rows.forEach(function (r) { tbody.insertBefore(r, otherRow || null); });
-      btn.dataset.sort = sortingByMargin ? 'margem' : 'receita';
-      btn.textContent = sortingByMargin ? 'ordenar por receita' : 'ordenar por margem';
+      linhas.forEach(function (tr) { tbody.insertBefore(tr, resto || null); });
+
+      pintarBarras(tbody, metrica);
+      btn.dataset.by = metrica;
+      btn.setAttribute("aria-pressed", String(porMargem));
+      btn.textContent = porMargem ? "ordenar por receita" : "ordenar por margem";
+      status.textContent = card.dataset.dim + " ordenado por " + (porMargem ? "margem" : "receita") + ". As barras agora representam " + (porMargem ? "a margem" : "a receita") + ".";
     });
   });
+})();
 </script>
